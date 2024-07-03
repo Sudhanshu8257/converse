@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: [],
     },
-    sitemap: `https://master--fantastic-arithmetic-702eed.netlify.app/`,
+    sitemap: `https://converse-chatbot.netlify.app/sitemap.xml`,
   };
 }

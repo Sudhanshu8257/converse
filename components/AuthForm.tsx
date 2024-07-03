@@ -98,7 +98,13 @@ const SubmitButton = ({ useAs }: { useAs: "login" | "register" }) => {
       disabled={pending}
       className="w-full bg-black text-lg lg:text-xl font-bold text-white rounded-md mt-4 py-4"
     >
-      {useAs === "login" ? `Log In` : `Register`}
+      {useAs === "login"
+        ? pending
+          ? `Logging In…`
+          : `Log In`
+        : pending
+        ? `Registering…`
+        : `Register`}
     </button>
   );
 };
