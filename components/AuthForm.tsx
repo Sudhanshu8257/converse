@@ -9,8 +9,10 @@ import Link from "next/link";
 import { loginUser, registerUser } from "@/actions/userAction";
 import { toast } from "sonner";
 import { useFormStatus } from "react-dom";
+import { useRouter } from "next/navigation";
 
 const AuthForm = ({ useAs }: { useAs: "login" | "register" }) => {
+  const router = useRouter();
   const handleSubmit = async (formdata: FormData) => {
     const fullName = `${formdata.get("fullName")}`;
     const email = `${formdata.get("email")}`;
@@ -19,7 +21,7 @@ const AuthForm = ({ useAs }: { useAs: "login" | "register" }) => {
       useAs === "register"
         ? await registerUser({ fullName, email, password })
         : await loginUser({ email, password });
-    data.message !== "OK" && toast.error(data.message);
+    data.message === "OK" ? router.push("/chat") : toast.error(data.message);
     data.errors && toast.error(data.errors[0].msg);
   };
   return (

@@ -30,7 +30,6 @@ export const registerUser = async ({
       const expires = new Date();
       expires.setDate(expires.getDate() + 7);
       cookies().set("auth", result.token, { expires: expires });
-      redirect("/chat");
     }
     return result;
   } catch (error) {
@@ -59,7 +58,6 @@ export const loginUser = async ({ email, password }: LoginUser) => {
       const expires = new Date();
       expires.setDate(expires.getDate() + 7);
       cookies().set("auth", result.token, { expires: expires });
-      redirect("/chat");
     }
     return result;
   } catch (error) {

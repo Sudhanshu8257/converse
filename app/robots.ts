@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: [],
     },
-    sitemap: `https://www.gurucool.life/sitemap.xml`,
+    sitemap: `https://master--fantastic-arithmetic-702eed.netlify.app/`,
   };
 }

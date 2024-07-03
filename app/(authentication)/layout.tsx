@@ -1,5 +1,4 @@
 import Image from "next/image";
-import authBg from "@/public/assets/authBg.jpg";
 export default function RootLayout({
   children,
 }: {
@@ -11,7 +10,14 @@ export default function RootLayout({
         {children}
       </div>
       <div className="min-h-full md:w-[50%] max-md:hidden relative">
-        <Image alt="bg" quality={100} fill src={"/assets/authBg.jpg"} />
+        <Image
+          alt="bg"
+          quality={100}
+          sizes="max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          priority
+          fill
+          src={"/assets/authBg.jpg"}
+        />
       </div>
     </div>
   );
