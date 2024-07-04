@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title:
     "Converse: Your Intelligent AI Chatbot - Transforming Conversations with Intelligent AI",
   description:
-    "Discover Converse, a user-friendly AI chatbot designed for seamless communication. Learn about our story, features, mission, and the creator behind this innovative tool.",
+    "Learn about Converse AI Chatbot: Our Story, Features, Mission, Creator, and Contact Info. Transforming Conversations with Intelligent AI.",
   keywords:
     "AI Chatbot, Conversational AI, Intelligent Chatbot, AI Assistant, Converse AI, Chatbot Service, AI Powered Chat, Virtual Assistant, Automation, Customer Engagement, Customer Experience, AI Technology, Natural Language Processing, Machine Learning, User-Friendly Chat Interface, Seamless Integration, Real-Time Messaging, Secure Communication, Customizable Chat Settings, Sudhanshu Lohana, Web Developer, UI/UX Designer, Contact Us, About the Creator, Online Communication, Meaningful Conversations",
 };

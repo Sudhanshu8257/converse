@@ -9,7 +9,7 @@ import React from "react";
 export const metadata: Metadata = {
   title: "Sudhanshu Lohana's Projects: A Showcase of Web Development Skills",
   description:
-    "Explore a curated collection of web projects built by Sudhanshu Lohana, showcasing expertise in ReactJs, NextJs, UI/UX, mongoDB , ExpressJS, NodeJS ,TailwindCSS. From full-stack applications to captivating portfolio pieces, discover the creative solutions and technical prowess behind each project",
+    "Explore the latest projects by Converse's creator. Discover innovative developments and advancements beyond the AI chatbot.",
   keywords:
     "AI Chatbot, Conversational AI, Intelligent Chatbot, sudhanshu lohana Projects, Web Development Projects, React Projects, Next.js Projects, React Developer, Next.js Developer, Full-Stack Developer, Portfolio Projects, UI/UX Design",
 };
