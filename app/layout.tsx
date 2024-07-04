@@ -32,6 +32,7 @@ export default function RootLayout({
           rel="stylesheet"
           href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.3.2/build/styles/lightfair.min.css"
         />
+        <meta name="google-site-verification" content="RfgfIR2mggs0B4hLU5DI53ne6Iq0vai5C6pyqP4BvG0" />
       </head>
       <Script src="https://unpkg.com/@highlightjs/cdn-assets@11.7.0/highlight.min.js" />
       <body className={poppins.className}>
