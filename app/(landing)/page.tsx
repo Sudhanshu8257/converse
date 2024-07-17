@@ -21,7 +21,7 @@ export default async function Home() {
           </span>
           <Link
             href={"/login"}
-            className="bg-black text-white font-bold lg:mt-4 px-4 py-3 lg:text-lg lg:py-4 rounded-lg lg:px-8"
+            className="bg-black text-white font-bold lg:mt-4 px-4 lg:text-lg rounded-lg lg:px-8"
           >
             <h2>Get Started</h2>
           </Link>
