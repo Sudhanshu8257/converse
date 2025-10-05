@@ -14,7 +14,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { logoutUser } from "@/actions/userAction";
-import DeleteChat from "./DeleteChat";
 
 const Navbar = ({ userToken }: { userToken?: string }) => {
   const pathname = usePathname();
@@ -79,9 +78,6 @@ const Navbar = ({ userToken }: { userToken?: string }) => {
                 </SheetClose>
               ))}
               {userToken && <>
-                <div className="w-full mt-auto">
-                  <DeleteChat />
-                </div>
                 <SheetClose asChild>
                   <button
                     onClick={handleClick}

@@ -10,9 +10,23 @@ import { loginUser, registerUser } from "@/actions/userAction";
 import { toast } from "sonner";
 import { useFormStatus } from "react-dom";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+
+const isValidRedirect = (redirect: string | null): boolean => {
+  if (!redirect) return false;
+  if (!redirect.startsWith("/")) return false;
+  if (redirect.startsWith("//")) return false;
+  if (redirect === "/login" || redirect === "/register") return false;
+  return true;
+};
 
 const AuthForm = ({ useAs }: { useAs: "login" | "register" }) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect")
+    ? decodeURIComponent(searchParams.get("redirect")!)
+    : null;
+
   const handleSubmit = async (formdata: FormData) => {
     const fullName = `${formdata.get("fullName")}`;
     const email = `${formdata.get("email")}`;
@@ -21,7 +35,10 @@ const AuthForm = ({ useAs }: { useAs: "login" | "register" }) => {
       useAs === "register"
         ? await registerUser({ fullName, email, password })
         : await loginUser({ email, password });
-    data.message === "OK" ? router.push("/chat") : toast.error(data.message);
+
+    data.message === "OK"
+      ? window.location.href =isValidRedirect(redirect) ? redirect! : "/chat"
+      : toast.error(data.message);
     data.errors && toast.error(data.errors[0].msg);
   };
   return (
@@ -79,7 +96,10 @@ const AuthForm = ({ useAs }: { useAs: "login" | "register" }) => {
             ? `Don't have an account? `
             : `Already have an account? `}
           <Link
-            href={useAs === "login" ? "/register" : "/login"}
+            href={{
+              pathname: useAs === "login" ? "/register" : "/login",
+              query: redirect ? { redirect } : {},
+            }}
             className="font-bold"
           >
             {useAs === "login" ? `Create an account` : `Login here`}

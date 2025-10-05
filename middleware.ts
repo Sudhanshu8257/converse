@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 export function middleware(request: NextRequest) {
   // Get the value of the 'auth' cookie
   const authCookie = request.cookies.get("auth")?.value;
-
+  
   // If the user is authenticated
   if (authCookie) {
     // Redirect authenticated users trying to access login or register pages to /chat
@@ -18,7 +18,9 @@ export function middleware(request: NextRequest) {
   } else {
     // Redirect unauthenticated users trying to access /chat to the login page
     if (request.nextUrl.pathname.startsWith("/chat")) {
-      return NextResponse.redirect(new URL("/login", request.url));
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("redirect", request.nextUrl.pathname || "/#");
+      return NextResponse.redirect(loginUrl);
     }
   }
 

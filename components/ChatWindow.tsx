@@ -5,7 +5,7 @@ import ChatMessage from "./ChatMessage";
 import { ArrowDown, Loader } from "lucide-react";
 import { Message } from "@/lib/types";
 
-const ChatWindow = ({ data }: { data: Message[] }) => {
+const ChatWindow = ({ data ,personalityId}: { data: Message[] , personalityId ?: string }) => {
   const [messages, setMessages] = useState<Message[]>(data);
   const [loading, setLoading] = useState<boolean>(false);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
@@ -53,14 +53,14 @@ const ChatWindow = ({ data }: { data: Message[] }) => {
       {showScrollToBottomBtn && (
         <div
           onClick={() => scrollToBottom()}
-          className="bg-white z-10 cursor-pointer backdrop-blur-md absolute w-fit top-4 right-4 bg-opacity-65 rounded-lg p-4"
+          className="bg-white z-20 cursor-pointer transition-all duration-100 backdrop-blur-md absolute w-fit top-4 right-4 bg-opacity-65 rounded-lg p-4"
         >
           <ArrowDown className="w-4 h-4 lg:h-6 lg:w-6" />
         </div>
       )}
       <div
         ref={chatContainerRef}
-        className="w-full h-full overflow-y-auto pb-2 custom-scrollbar rounded-xl mb-[72px]"
+        className="w-full h-full overflow-y-auto z-[0] pb-2 custom-scrollbar rounded-xl mb-[72px]"
       >
         {messages?.map((message: any, i: any) => (
           <ChatMessage key={i} role={message.role} parts={message.parts} />
@@ -73,6 +73,7 @@ const ChatWindow = ({ data }: { data: Message[] }) => {
           setMessages={setMessages}
           loading={loading}
           setLoading={setLoading}
+          personalityId={personalityId}
         />
       </div>
     </div>

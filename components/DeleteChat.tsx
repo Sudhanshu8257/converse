@@ -14,11 +14,10 @@ import { DialogClose } from "@radix-ui/react-dialog";
 import { Button } from "./ui/button";
 import { clearConversation } from "@/actions/chatAction";
 import { useRouter } from "next/navigation";
-const DeleteChat = () => {
+const DeleteChat = ({personalityId} :{personalityId?:string}) => {
   const router = useRouter();
   const handleClick = async () => {
-    const result = await clearConversation();
-    console.log("result", result);
+    const result = await clearConversation({personalityId});
     if (result && result.message === "OK") {
       window.location.reload();
     }
@@ -26,10 +25,9 @@ const DeleteChat = () => {
   return (
     <>
       <Dialog>
-        <DialogTrigger className="lg:absolute lg:top-28 lg:left-8 lg:z-10 focus-visible:bg-none">
-          <div className="lg:bg-black z-10 flex gap-2 font-medium  items-center justify-center cursor-pointer backdrop-blur-md  rounded-full lg:p-4">
+        <DialogTrigger className="absolute top-28 left-8 z-10 focus-visible:bg-none">
+          <div className="lg:bg-black bg-white/65 z-10 flex gap-2 font-medium  items-center justify-center cursor-pointer backdrop-blur-md rounded-lg lg:rounded-full p-4">
             <Trash2Icon size={24} className="lg:text-white text-black" />
-            <span className="lg:hidden">Clear Chat</span>
           </div>
         </DialogTrigger>
         <DialogContent>

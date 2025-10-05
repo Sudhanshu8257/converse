@@ -12,10 +12,12 @@ export function ChatInput({
   setMessages,
   setLoading,
   loading,
+  personalityId
 }: {
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   loading: boolean;
+  personalityId ?: string
 }) {
   const [input, setInput] = React.useState("");
 
@@ -40,7 +42,7 @@ export function ChatInput({
     try {
       const newMessage = { role: "user", parts: value };
       setMessages((currentMessages: any) => [...currentMessages, newMessage]);
-      const responseMessage = await sendMessage({ message: value });
+      const responseMessage = await sendMessage({ message: value, personalityId });
       setMessages((currentMessages: any) => [
         ...currentMessages,
         responseMessage?.chats,
