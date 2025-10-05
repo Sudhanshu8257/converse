@@ -20,7 +20,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   );
   return [
     { url: `${process.env.BASE_URL}`, lastModified: new Date() },
-    { url: `${process.env.BASE_URL}chat` },
     { url: `${process.env.BASE_URL}celebrities` },
     { url: `${process.env.BASE_URL}login` },
     { url: `${process.env.BASE_URL}register` },
