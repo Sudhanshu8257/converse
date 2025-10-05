@@ -13,19 +13,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const lowercaseformattedTitle = formattedTitle.toLowerCase();
       const decodedTitle = decodeURIComponent(lowercaseformattedTitle);
       return {
-        url: `${process.env.BASE_URL}/personality/${escapeXml(decodedTitle)}`,
+        url: `${process.env.BASE_URL}personality/${escapeXml(decodedTitle)}`,
         lastModified: new Date() 
       };
     }
   );
   return [
     { url: `${process.env.BASE_URL}`, lastModified: new Date() },
-    { url: `${process.env.BASE_URL}/chat` },
-    { url: `${process.env.BASE_URL}/celebrities` },
-    { url: `${process.env.BASE_URL}/login` },
-    { url: `${process.env.BASE_URL}/register` },
-    { url: `${process.env.BASE_URL}/about` },
-    { url: `${process.env.BASE_URL}/my-projects` },
+    { url: `${process.env.BASE_URL}chat` },
+    { url: `${process.env.BASE_URL}celebrities` },
+    { url: `${process.env.BASE_URL}login` },
+    { url: `${process.env.BASE_URL}register` },
+    { url: `${process.env.BASE_URL}about` },
+    { url: `${process.env.BASE_URL}my-projects` },
     ...celebEntries
   ];
 }
