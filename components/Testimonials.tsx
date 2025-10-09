@@ -1,6 +1,7 @@
 import { QuoteIcon } from "lucide-react";
 import Image from "next/image";
 import React from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 const Testimonials = ({
   data,
@@ -12,9 +13,9 @@ const Testimonials = ({
     avatar: string;
   }[];
 }) => {
-  const batch1 = data?.slice(0,10)
+  const batch1 = data?.slice(0, 10);
 
-  const batch2 = data?.slice(10)
+  const batch2 = data?.slice(10);
 
   return (
     <div className="flex flex-col items-center justify-center gap-12 py-12 w-full">
@@ -58,36 +59,49 @@ const Testimonials = ({
       </div>
     </div>
   );
-
-  // Helper component for clarity
 };
+
+type TestimonialCardProps = {
+  message: string;
+  avatar: string;
+  author: string;
+  role: string;
+};
+
 const TestimonialCard = ({
   message,
   avatar,
   author,
   role,
-}: {
-  message: string;
-  avatar: string;
-  author: string;
-  role: string;
-}) => (
-  <div className="rounded-2xl shrink-0 flex flex-col gap-2 bg-white p-6 max-w-[520px] w-[320px] lg:w-[520px] mx-3">
-    <QuoteIcon className="rotate-180" />
-    <h3 className="text-sm lg:text-lg font-medium">{message}</h3>
-    <div className="flex items-center gap-2 w-fit mt-2 lg:mt-4">
-      <div className="w-12 h-12 rounded-full relative overflow-hidden max-lg:hidden">
-        <Image src={avatar} alt={author} fill sizes="48px" />
-      </div>
-      <div className="w-8 h-8 rounded-full relative overflow-hidden lg:hidden">
-        <Image src={avatar} alt={author} fill sizes="16px" />
-      </div>
-      <div className="flex flex-col gap-0">
-        <p className="font-semibold max-lg:text-sm m-0">{author}</p>
-        <p className="text-sm opacity-70 m-0 max-lg:text-xs">{role}</p>
+}: TestimonialCardProps) => {
+  const getInitials = (name: string) => {
+    const names = name.trim().split(" ");
+    if (names.length > 1) {
+      return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase();
+    }
+    if (names[0].length > 1) {
+      return names[0].substring(0, 2).toUpperCase();
+    }
+    return names[0].toUpperCase();
+  };
+
+  const authorInitials = getInitials(author);
+
+  return (
+    <div className="rounded-2xl shrink-0 flex flex-col gap-2 bg-white p-6 max-w-[520px] w-[320px] lg:w-[520px] mx-3">
+      {/* <QuoteIcon className="rotate-180" /> */}
+      <h3 className="text-sm lg:text-lg font-medium">{message}</h3>
+      <div className="flex items-center gap-2 w-fit mt-2 lg:mt-4">
+        <Avatar className="w-8 h-8 lg:w-12 lg:h-12">
+          <AvatarImage src={avatar} alt={author} />
+          <AvatarFallback>{authorInitials}</AvatarFallback>
+        </Avatar>
+        <div className="flex flex-col gap-0">
+          <p className="font-semibold max-lg:text-sm m-0">{author}</p>
+          <p className="text-sm opacity-70 m-0 max-lg:text-xs">{role}</p>
+        </div>
       </div>
     </div>
-  </div>
-);
-
+  );
+};
 export default Testimonials;
