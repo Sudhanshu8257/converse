@@ -1,9 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    remotePatterns: [
+   remotePatterns: [
       {
+        protocol: 'https',
         hostname: "randomuser.me",
+      },
+      {
+        protocol: 'https',
+        hostname: "backend-sepia-omega.vercel.app",
       },
     ],
   },
