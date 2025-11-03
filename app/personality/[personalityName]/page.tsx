@@ -24,6 +24,28 @@ export async function generateMetadata({
     title: personality?.metaTitle,
     description: personality?.metaDescription,
     keywords: personality?.metaKeywords,
+    openGraph: {
+      title: `${personality.fullName} AI`,
+      description: personality?.metaDescription,
+      url: `https://converse-chatbot.netlify.app/personality/${personalityName}`,
+      siteName: "GuruCool",
+      images: [
+        {
+          url: personality?.imgUrl,
+          width: 1200,
+          height: 630,
+          alt: `${personalityName} converse ai`,
+        },
+      ],
+      locale: "en_US",
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${personality?.imgUrl}`,
+      description: personality?.metaDescription,
+      images: [personality?.imgUrl],
+    },
   };
 }
 
