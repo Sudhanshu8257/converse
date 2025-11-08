@@ -17,9 +17,11 @@ import json from "highlight.js/lib/languages/json";
 const ChatMessage = ({
   parts,
   role,
+  personalityImageUrl,
 }: {
   parts: string;
   role: "user" | "model" | string;
+  personalityImageUrl?: string
 }) => {
   hljs.configure({
     ignoreUnescapedHTML: true,
@@ -53,10 +55,10 @@ const ChatMessage = ({
       {role === "model" ? (
         <>
           <div className="w-full bg-[#F0FAF9] p-3 rounded-xl flex gap-2">
-            <div className="w-8 h-8 relative shrink-0 mt-3 rounded-full ">
+            <div className="w-8 h-8 relative overflow-hidden shrink-0 mt-3 rounded-full ">
               <Image
                 fill
-                src={logo}
+                src={personalityImageUrl || logo}
                 sizes="max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 quality={100}
                 alt="Coverse Ai"
@@ -78,8 +80,8 @@ const ChatMessage = ({
       ) : (
         <>
           <div className="w-full p-3 rounded-xl flex gap-2">
-            <div className="w-8 h-8 relative flex items-center justify-center font-medium shrink-0 rounded-full ">
-              SL
+            <div className="w-8 h-8 relative flex overflow-hidden items-center justify-center font-medium shrink-0 rounded-full ">
+              YOU
             </div>
             <div className="text-left mt-1 overflow-x-auto break-words  md:text-lg">
               <Markdown

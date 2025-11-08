@@ -3,9 +3,20 @@ import { useEffect, useRef, useState } from "react";
 import { ChatInput } from "./ChatInput";
 import ChatMessage from "./ChatMessage";
 import { ArrowDown, Loader } from "lucide-react";
-import { Message } from "@/lib/types";
+import { Message, Personality } from "@/lib/types";
 
-const ChatWindow = ({ data ,personalityId}: { data: Message[] , personalityId ?: string }) => {
+// Add Personality Image
+// Remove SL use User Initials
+
+const ChatWindow = ({
+  data,
+  personalityId,
+  personalityData,
+}: {
+  data: Message[];
+  personalityId?: string;
+  personalityData?: Personality;
+}) => {
   const [messages, setMessages] = useState<Message[]>(data);
   const [loading, setLoading] = useState<boolean>(false);
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
@@ -63,7 +74,7 @@ const ChatWindow = ({ data ,personalityId}: { data: Message[] , personalityId ?:
         className="w-full h-full overflow-y-auto z-[0] pb-2 custom-scrollbar rounded-xl mb-[72px]"
       >
         {messages?.map((message: any, i: any) => (
-          <ChatMessage key={i} role={message.role} parts={message.parts} />
+          <ChatMessage key={i} role={message.role} parts={message.parts} personalityImageUrl={personalityData?.imgUrl} />
         ))}
         {loading && <Loader size={32} className="animate-spin mx-auto mt-4" />}
       </div>

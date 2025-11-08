@@ -1,4 +1,8 @@
-import { getChats, getPersonalityMessageById } from "@/actions/chatAction";
+import {
+  getChats,
+  getPersonalityById,
+  getPersonalityMessageById,
+} from "@/actions/chatAction";
 import { getUserToken } from "@/actions/userAction";
 import ChatWindow from "@/components/ChatWindow";
 import DeleteChat from "@/components/DeleteChat";
@@ -19,9 +23,14 @@ export const metadata: Metadata = {
 const page = async ({ params }: { params: { personalityId: string } }) => {
   const { personalityId } = params;
   if (!personalityId) redirect("/");
+  const [personalityData, chatData] = await Promise.all([
+    getPersonalityById({ personalityId }),
+    getPersonalityMessageById({ personalityId }),
+  ]);
 
-  const chatData = await getPersonalityMessageById({ personalityId });
-  
+  if (!personalityData) redirect("/");
+
+
   const userToken = await getUserToken();
   return (
     <div className="flex flex-col items-center max-w-[1830px] mx-auto lg:py-4 lg:px-6 max-lg:p-4 gap-4 w-full h-screen">
@@ -29,7 +38,7 @@ const page = async ({ params }: { params: { personalityId: string } }) => {
       <div className="max-lg:hidden">
         <DeleteChat personalityId={personalityId} />
       </div>
-      <ChatWindow data={chatData.data.messages} personalityId={personalityId}/>
+      <ChatWindow personalityData={personalityData?.data} data={chatData.data.messages} personalityId={personalityId} />
     </div>
   );
 };
