@@ -55,7 +55,7 @@ const ChatMessage = ({
       {role === "model" ? (
         <>
           <div className="w-full bg-[#F0FAF9] p-3 rounded-xl flex gap-2">
-            <div className="w-8 h-8 relative overflow-hidden shrink-0 mt-3 rounded-full ">
+            <div className="w-8 h-8 relative overflow-hidden shrink-0 mt-3 rounded-full object-center">
               <Image
                 fill
                 src={personalityImageUrl || logo}
