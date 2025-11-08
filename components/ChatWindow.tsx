@@ -5,9 +5,6 @@ import ChatMessage from "./ChatMessage";
 import { ArrowDown, Loader } from "lucide-react";
 import { Message, Personality } from "@/lib/types";
 
-// Add Personality Image
-// Remove SL use User Initials
-
 const ChatWindow = ({
   data,
   personalityId,
