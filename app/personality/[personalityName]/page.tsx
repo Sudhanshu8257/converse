@@ -77,6 +77,7 @@ const personality = async ({
             <Image
               src={personality.imgUrl}
               quality={100}
+              priority
               alt="converse"
               fill
               className="object-cover"
