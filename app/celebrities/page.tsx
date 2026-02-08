@@ -40,6 +40,7 @@ const Celebrities = async ({
   return (
     <>
       <Script
+        id="Celebrity"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
@@ -92,7 +93,7 @@ const Celebrities = async ({
             ))}
           </div>
         </Wrapper>
-        <FAQ data={CelebritiesFaqs}/>
+        <FAQ data={CelebritiesFaqs} />
       </div>
     </>
   );

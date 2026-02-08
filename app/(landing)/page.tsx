@@ -13,12 +13,14 @@ export default async function Home() {
   return (
     <>
       <Script
+        id="PersonSchema"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(HomePagePersonSchema),
         }}
       />
       <Script
+        id="FaqSchema"
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(HomeFaqSchema),

@@ -71,6 +71,7 @@ const personality = async ({
   return (
     <>
       <Script
+        id="PersonalitySchama"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
