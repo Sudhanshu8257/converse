@@ -4,6 +4,7 @@ import "./globals.css";
 import Head from "next/head";
 import Script from "next/script";
 import { Toaster } from "@/components/ui/sonner";
+import { baseUrl } from "@/lib/seo";
 
 const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -23,6 +24,19 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: "./",
+  },
+  openGraph: {
+    url: baseUrl,
+    siteName: "Converse",
+    images: [
+      {
+        url: "/assets/logo.png",
+        width: 1200,
+        height: 630,
+        alt: `Converse Logo`,
+      },
+    ],
+    type: "website",
   },
 };
 

@@ -1,4 +1,4 @@
-const baseUrl = "https://converse-chatbot.netlify.app";
+export const baseUrl = "https://converse-chatbot.netlify.app";
 
 export const HomePagePersonSchema = {
   "@context": "https://schema.org",
