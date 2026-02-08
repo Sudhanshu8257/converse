@@ -11,9 +11,6 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: "backend-sepia-omega.vercel.app",
-        // Crucial: Only allow your specific uploads folder
-        // Use your actual storage path here (e.g., /uploads or /images)
-        pathname: '/api/files/**', 
       },
     ],
     // Optional: Protect your memory by limiting allowed output sizes
