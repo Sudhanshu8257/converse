@@ -28,7 +28,7 @@ const Navbar = ({ userToken }: { userToken?: string }) => {
         <div className="w-[32px] h-[32px] relative">
           <Image fill src={logo} quality={100} sizes="max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" alt="Coverse Ai" />
         </div>
-        <h3 className="font-bold text-base lg:text-xl">Converse</h3>
+        <p className="font-bold text-base lg:text-xl">Converse</p>
       </Link>
       <div className="bg-white max-lg:hidden shrink-0 overflow-hidden font-medium rounded-full w-fit flex items-center justify-center gap-4 p-0">
         {NavLinks.map((link, i) => (

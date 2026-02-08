@@ -11,10 +11,9 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title:
-    "Converse: Your Intelligent AI Chatbot - Transforming Conversations with Intelligent AI",
+  title: "Converse: Transform Conversations with Intelligent AI",
   description:
-    "Converse is your friendly AI chatbot, always ready to help. Get instant answers, personalized assistance, and engaging conversations, all powered by cutting-edge technology. Experience the future of communication, make your life easier, and get more done with Converse!",
+    "Converse: Chat with your favorite AI characters and famous personalities. Get instant answers, friendly help, and engaging dialogue in one smart platform.",
   keywords:
     "AI Chatbot, Conversational AI, Intelligent Chatbot, AI Assistant, Converse AI, Chatbot Service, AI Powered Chat, Virtual Assistant, Automation, Customer Engagement, Customer Experience, AI Technology, Natural Language Processing, Machine Learning, Online Chat, Live Chat, 24/7 Support, Instant Answers, Personalized Experience, User-Friendly, Efficient Communication",
   icons: {
@@ -22,9 +21,9 @@ export const metadata: Metadata = {
     apple: ["/apple-touch-icon.png?v=4"],
     shortcut: ["/apple-touch-icon.png"],
   },
-   alternates: {
-    canonical: './',
-  }
+  alternates: {
+    canonical: "./",
+  },
 };
 
 export default function RootLayout({

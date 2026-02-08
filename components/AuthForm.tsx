@@ -47,14 +47,14 @@ const AuthForm = ({ useAs }: { useAs: "login" | "register" }) => {
         <div className="w-[32px] h-[32px] relative">
           <Image fill src={logo} quality={100} alt="Coverse Ai" />
         </div>
-        <h3 className="font-bold text-base lg:text-xl">Converse</h3>
+        <h1 className="font-bold text-base lg:text-xl">Converse</h1>
       </Link>
-      <span className="font-bold text-2xl">
+      <h2 className="font-bold text-2xl">
         {useAs === "login" ? "Login to your account" : "Create Your Account"}
-      </span>
-      <span className="mt-1">
+      </h2>
+      <h3 className="mt-1">
         Transforming Conversations with Intelligent AI
-      </span>
+      </h3>
       <form
         action={handleSubmit}
         className="w-full h-fit flex flex-col mt-4 items-center justify-center gap-3"

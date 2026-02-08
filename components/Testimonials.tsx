@@ -97,8 +97,8 @@ const TestimonialCard = ({
           <AvatarFallback>{authorInitials}</AvatarFallback>
         </Avatar>
         <div className="flex flex-col gap-0">
-          <p className="font-semibold max-lg:text-sm m-0">{author}</p>
-          <p className="text-sm opacity-70 m-0 max-lg:text-xs">{role}</p>
+          <h4 className="font-semibold max-lg:text-sm m-0">{author}</h4>
+          <h5 className="text-sm opacity-70 m-0 max-lg:text-xs">{role}</h5>
         </div>
       </div>
     </div>

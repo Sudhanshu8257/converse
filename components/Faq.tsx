@@ -10,24 +10,25 @@ import {
 interface FaqItem {
   question: string;
   answer: string;
+  _id?: string;
 }
 
 export default function FAQ({ data }: { data: FaqItem[] }) {
   return (
-    <section id="faq" className="py-20 w-full bg-white">
+    <section id="faq" className="py-20 w-full" aria-labelledby="faq-title">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="lg:text-4xl text-xl font-bold lg:mb-4">
+          <h2 id="faq-title" className="lg:text-4xl text-xl font-bold lg:mb-4">
             Frequently Asked Questions
           </h2>
         </div>
 
-        <div className="grid  gap-8">
+        <div className="grid gap-8">
           <div className="max-w-[900px] w-full mx-auto">
             <Accordion type="single" collapsible className="space-y-4">
-              {data.map((faq: any, index: number) => (
+              {data.map((faq, index) => (
                 <AccordionItem
-                  key={index}
+                  key={faq?._id || index}
                   value={`item-${index}`}
                   className="border border-black/20 rounded-2xl px-6"
                 >
