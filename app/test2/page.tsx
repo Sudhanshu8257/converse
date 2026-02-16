@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState, ChangeEvent } from "react";
-import { Download, Loader2, ImagePlus, Pencil } from "lucide-react";
+import { Download, Loader2, ImagePlus, Pencil, Lock } from "lucide-react";
+import { uploadToAnimeApi } from "@/actions/posterAction";
 
 // --- CONSTANTS ---
 const POSTER_WIDTH = 724;
 const POSTER_HEIGHT = 1080;
 const PHOTO_X = 367;
 const PHOTO_Y = 446;
+const COOLDOWN_TIME = 60; // seconds
 
 export default function PosterEditor() {
   const canvasEl = useRef<HTMLCanvasElement>(null);
@@ -15,13 +17,27 @@ export default function PosterEditor() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const fabricRef = useRef<any>(null);
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); // Initial canvas load
+  const [isProcessing, setIsProcessing] = useState(false); // API processing
   const [hasPhoto, setHasPhoto] = useState(false);
-  const [isEditingText, setIsEditingText] = useState(false); // New State to track keyboard
+  const [isEditingText, setIsEditingText] = useState(false);
+  
+  // Cooldown State
+  const [cooldown, setCooldown] = useState(0);
+
+  // --- TIMER LOGIC ---
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (cooldown > 0) {
+      timer = setInterval(() => {
+        setCooldown((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [cooldown]);
 
   // --- 1. PREVENT SCROLL & RIGHT CLICK ---
   useEffect(() => {
-    // Lock body scroll prevents the "extra space" issue
     document.body.style.overflow = "hidden";
     document.body.style.position = "fixed";
     document.body.style.width = "100%";
@@ -32,7 +48,6 @@ export default function PosterEditor() {
 
     return () => {
       document.removeEventListener("contextmenu", handleContextMenu);
-      // cleanup
       document.body.style.overflow = "";
       document.body.style.position = "";
       document.body.style.width = "";
@@ -48,14 +63,7 @@ export default function PosterEditor() {
       if (!canvasEl.current) return;
 
       try {
-        const {
-          Canvas,
-          FabricImage,
-          IText,
-          Rect,
-          Group,
-          Object: FabricObject,
-        } = await import("fabric");
+        const { Canvas, FabricImage, IText, Rect, Group, Object: FabricObject } = await import("fabric");
         if (!isMounted) return;
 
         // --- CUSTOMIZE CONTROLS ---
@@ -67,7 +75,8 @@ export default function PosterEditor() {
         FabricObject.prototype.cornerSize = 12;
 
         const fontName = "WantedPrint";
-        const fontUrl = "url(/fonts/Aldine.otf)";
+        // Ensure this font path is correct in your public folder
+        const fontUrl = "url(/fonts/Aldine.otf)"; 
         const printFont = new FontFace(fontName, fontUrl);
         try {
           await printFont.load();
@@ -86,11 +95,8 @@ export default function PosterEditor() {
         });
         fabricRef.current = canvas;
 
-        // --- EVENT LISTENERS FOR KEYBOARD ---
-        // When user double clicks text, we know keyboard is coming
         canvas.on("text:editing:entered", () => {
           setIsEditingText(true);
-          // Scroll to top to ensure visibility
           window.scrollTo(0, 0);
         });
 
@@ -130,7 +136,13 @@ export default function PosterEditor() {
         });
 
         uploadGroup.set("name", "upload_trigger");
-        uploadGroup.on("mousedown", () => fileInputRef.current?.click());
+        // Trigger file input on click
+        uploadGroup.on("mousedown", () => {
+            // Only trigger if no cooldown
+            // We can't easily access react state inside fabric event cleanly without refs, 
+            // but for the initial upload, cooldown is usually 0.
+            fileInputRef.current?.click()
+        });
         canvas.add(uploadGroup);
 
         // --- B. ADD TEMPLATE ---
@@ -161,8 +173,8 @@ export default function PosterEditor() {
           editable: true,
           lockUniScaling: false,
           centeredScaling: true,
-        cornerColor: "#ff0000",
-        borderColor: "#ff0000",
+          cornerColor: "#ff0000",
+          borderColor: "#ff0000",
         });
 
         canvas.add(nameText);
@@ -199,47 +211,69 @@ export default function PosterEditor() {
 
   const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!fabricRef.current || !e.target.files?.[0]) return;
+    
+    // Check cooldown
+    if (cooldown > 0) {
+        alert(`Please wait ${cooldown} seconds before replacing.`);
+        return;
+    }
 
-    const { FabricImage } = await import("fabric");
     const file = e.target.files[0];
-    const reader = new FileReader();
+    e.target.value = ""; // Reset input so same file can be selected again if needed
+    
+    setIsProcessing(true); // Start Loading Overlay
 
-    reader.onload = async (event) => {
-      if (!event.target?.result) return;
-      const imgUrl = event.target.result.toString();
+    // 1. Prepare Form Data
+    const formData = new FormData();
+    formData.append("image", file);
 
-      const objects = fabricRef.current.getObjects();
-      const oldPhoto = objects.find((o: any) => o.name === "user_photo");
-      const uploadBtn = objects.find((o: any) => o.name === "upload_trigger");
+    // 2. Call Server Action
+    const result = await uploadToAnimeApi(formData);
 
-      if (oldPhoto) fabricRef.current.remove(oldPhoto);
-      if (uploadBtn) fabricRef.current.remove(uploadBtn);
+    if (!result.success || !result.imageUrl) {
+        setIsProcessing(false);
+        alert("Failed to process image. Please try again.");
+        return;
+    }
 
-      const img = await FabricImage.fromURL(imgUrl);
+    // 3. Paint returned URL to Canvas
+    const { FabricImage } = await import("fabric");
+    
+    // IMPORTANT: CrossOrigin is needed for external images to allow export (toDataURL)
+    const img = await FabricImage.fromURL(result.imageUrl, {
+        crossOrigin: "anonymous" 
+    });
 
-      img.set({
-        left: 367,
-        top: 446,
-        scaleX: 0.61,
-        scaleY: 0.62,
-        originX: "center",
-        originY: "center",
-        transparentCorners: false,
-        cornerColor: "#ff0000",
-        borderColor: "#ff0000",
-      });
+    const objects = fabricRef.current.getObjects();
+    const oldPhoto = objects.find((o: any) => o.name === "user_photo");
+    const uploadBtn = objects.find((o: any) => o.name === "upload_trigger");
 
-      img.set("name", "user_photo");
+    if (oldPhoto) fabricRef.current.remove(oldPhoto);
+    if (uploadBtn) fabricRef.current.remove(uploadBtn);
 
-      fabricRef.current.add(img);
-      fabricRef.current.sendObjectToBack(img);
-      fabricRef.current.setActiveObject(img);
+    img.set({
+      left: 367,
+      top: 446,
+      scaleX: 0.61,
+      scaleY: 0.62,
+      originX: "center",
+      originY: "center",
+      transparentCorners: false,
+      cornerColor: "#ff0000",
+      borderColor: "#ff0000",
+    });
 
-      fabricRef.current.requestRenderAll();
-      setHasPhoto(true);
-    };
-    reader.readAsDataURL(file);
-    e.target.value = "";
+    img.set("name", "user_photo");
+
+    fabricRef.current.add(img);
+    fabricRef.current.sendObjectToBack(img);
+    fabricRef.current.setActiveObject(img);
+    fabricRef.current.requestRenderAll();
+
+    // 4. Update State & Start Cooldown
+    setHasPhoto(true);
+    setIsProcessing(false);
+    setCooldown(COOLDOWN_TIME);
   };
 
   const download = () => {
@@ -257,31 +291,28 @@ export default function PosterEditor() {
     link.click();
   };
 
+  const triggerUpload = () => {
+    if (cooldown > 0) return;
+    fileInputRef.current?.click();
+  };
+
   return (
-    // MAIN WRAPPER: Fixed and Hidden Overflow
     <div className="fixed inset-0 w-full h-full bg-gray-50 font-sans overflow-hidden">
-      {/* SCROLLABLE INNER: 
-        This is where the magic happens.
-        If isEditingText is TRUE (Keyboard open), we switch to 'justify-start' (Top alignment).
-        If FALSE (Normal), we use 'justify-center' (Center alignment).
-      */}
       <div
         className={`w-full h-full overflow-y-auto flex flex-col items-center p-4 transition-all duration-300 ${isEditingText ? "justify-start pt-4" : "justify-center"}`}
       >
-        {/* H1 - Hidden when typing to save space on small screens */}
         {!isEditingText && (
           <h1 className="text-3xl font-extrabold mb-6 text-gray-800 tracking-tight shrink-0">
             WANTED MAKER
           </h1>
         )}
 
-        {/* EDITOR */}
         <div
           ref={containerRef}
-          className="relative w-full max-w-[340px] bg-white shadow-2xl rounded-sm border border-gray-200 shrink-0"
-          // Start height (will be auto-scaled)
+          className="relative w-full max-w-[340px] bg-white shadow-2xl rounded-sm border border-gray-200 shrink-0 overflow-hidden"
           style={{ height: "500px" }}
         >
+            {/* INITIAL LOADING */}
           {isLoading && (
             <div className="absolute inset-0 z-20 bg-gray-50 flex flex-col items-center justify-center gap-3">
               <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
@@ -291,22 +322,46 @@ export default function PosterEditor() {
             </div>
           )}
 
+          {/* API PROCESSING LOADING (Gradient Overlay) */}
+          {isProcessing && (
+            <div className="absolute inset-0 z-50 flex flex-col items-center justify-center animate-in fade-in duration-300">
+               {/* Gradient Background with blur */}
+               <div className="absolute inset-0 bg-white/20 backdrop-blur-md" />
+               
+               <div className="relative z-10 flex flex-col items-center gap-4 text-black p-6">
+                 <Loader2 className="w-12 h-12 animate-spin text-black/90" />
+                 <div className="text-center">
+                    <p className="text-lg font-bold tracking-wide">Generating Anime Art</p>
+                    <p className="text-sm text-black/70">Applying wanted poster filters...</p>
+                 </div>
+               </div>
+            </div>
+          )}
+
           <div className="w-full h-full overflow-hidden">
             <canvas ref={canvasEl} className="block" />
           </div>
 
-          {hasPhoto && !isLoading && !isEditingText && (
+          {/* FLOATING PENCIL BUTTON (Disabled if cooldown) */}
+          {hasPhoto && !isLoading && !isEditingText && !isProcessing && (
             <button
-              onClick={() => fileInputRef.current?.click()}
-              className="absolute z-30 top-[58%] right-[12%] bg-white text-gray-700 p-2.5 rounded-full shadow-md border border-gray-200 hover:bg-gray-50 active:scale-95"
-              title="Replace Photo"
+              onClick={triggerUpload}
+              disabled={cooldown > 0}
+              className={`absolute z-30 top-[58%] right-[12%] p-2.5 rounded-full shadow-md border border-gray-200 transition-all
+                ${cooldown > 0 
+                  ? "bg-gray-200 text-gray-400 cursor-not-allowed" 
+                  : "bg-white text-gray-700 hover:bg-gray-50 active:scale-95"}`}
+              title={cooldown > 0 ? `Wait ${cooldown}s` : "Replace Photo"}
             >
-              <Pencil className="w-5 h-5" />
+              {cooldown > 0 ? (
+                  <span className="font-bold text-xs w-5 h-5 flex items-center justify-center">{cooldown}</span>
+              ) : (
+                  <Pencil className="w-5 h-5" />
+              )}
             </button>
           )}
         </div>
 
-        {/* CONTROLS - Hidden when typing to give maximum space to keyboard */}
         {!isEditingText && (
           <>
             <div className="flex gap-3 mt-6 w-full max-w-[340px] justify-center shrink-0">
@@ -316,21 +371,29 @@ export default function PosterEditor() {
                 onChange={handleImageUpload}
                 className="hidden"
                 accept="image/*"
-                disabled={isLoading}
+                disabled={isLoading || isProcessing || cooldown > 0}
               />
 
               <button
-                onClick={() => fileInputRef.current?.click()}
-                className="flex-1 bg-white hover:bg-gray-50 text-gray-700 border border-gray-300 py-3 px-4 rounded-lg font-semibold shadow-sm text-sm transition-all flex items-center justify-center gap-2"
+                onClick={triggerUpload}
+                disabled={cooldown > 0 || isProcessing}
+                className={`flex-1 border py-3 px-4 rounded-lg font-semibold shadow-sm text-sm transition-all flex items-center justify-center gap-2
+                    ${cooldown > 0 
+                        ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                        : "bg-white hover:bg-gray-50 text-gray-700 border-gray-300"
+                    }`}
               >
-                <ImagePlus className="w-4 h-4" />
-                <span>{hasPhoto ? "Change" : "Upload"}</span>
+                 {cooldown > 0 ? <Lock className="w-4 h-4"/> : <ImagePlus className="w-4 h-4" />}
+                
+                <span>
+                    {isProcessing ? "Processing..." : hasPhoto ? (cooldown > 0 ? `Wait ${cooldown}s` : "Replace") : "Upload"}
+                </span>
               </button>
 
               <button
                 onClick={download}
-                disabled={isLoading}
-                className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg font-semibold shadow-md text-sm transition-all flex items-center justify-center gap-2"
+                disabled={isLoading || isProcessing}
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-lg font-semibold shadow-md text-sm transition-all flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 <Download className="w-4 h-4" />
                 <span>Download</span>
@@ -338,7 +401,9 @@ export default function PosterEditor() {
             </div>
 
             <p className="mt-4 text-gray-400 text-xs text-center font-medium max-w-[300px] shrink-0 pb-10">
-              Tap pencil to replace. Double tap text to edit.
+              {cooldown > 0 
+                ? `You can upload a new photo in ${cooldown} seconds.` 
+                : "Tap pencil to replace. Double tap text to edit."}
             </p>
           </>
         )}
@@ -346,13 +411,3 @@ export default function PosterEditor() {
     </div>
   );
 }
-
-/*
-TODO
-Retry button for user image with 60s delay
-scaling box color changes for text 
-edit and retry btn ui changes
-
-api addition 
-
-*/
