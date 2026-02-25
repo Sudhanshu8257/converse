@@ -17,8 +17,8 @@ export default function PosterEditor() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const fabricRef = useRef<any>(null);
 
-  const [isLoading, setIsLoading] = useState(true); // Initial canvas load
-  const [isProcessing, setIsProcessing] = useState(false); // API processing
+  const [isLoading, setIsLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [hasPhoto, setHasPhoto] = useState(false);
   const [isEditingText, setIsEditingText] = useState(false);
   
@@ -75,7 +75,6 @@ export default function PosterEditor() {
         FabricObject.prototype.cornerSize = 12;
 
         const fontName = "WantedPrint";
-        // Ensure this font path is correct in your public folder
         const fontUrl = "url(/fonts/Aldine.otf)"; 
         const printFont = new FontFace(fontName, fontUrl);
         try {
@@ -136,11 +135,7 @@ export default function PosterEditor() {
         });
 
         uploadGroup.set("name", "upload_trigger");
-        // Trigger file input on click
         uploadGroup.on("mousedown", () => {
-            // Only trigger if no cooldown
-            // We can't easily access react state inside fabric event cleanly without refs, 
-            // but for the initial upload, cooldown is usually 0.
             fileInputRef.current?.click()
         });
         canvas.add(uploadGroup);
@@ -178,6 +173,59 @@ export default function PosterEditor() {
         });
 
         canvas.add(nameText);
+
+        // --- D. ADD CORNER WATERMARKS (STRIPS WITH TEXT) ---
+        const stripColor = "#0046ad"; // Converse Blue
+        const offset = 75; // Distance from corner
+
+        const createCornerLabel = (text: string, angle: number, left: number, top: number) => {
+          // 1. The Blue Strip
+          const rect = new Rect({
+            width: 300,
+            height: 35,
+            fill: stripColor,
+            originX: "center",
+            originY: "center",
+          });
+
+          // 2. The Text
+          const label = new IText(text, {
+            fontFamily: "Arial",
+            fontSize: 20,
+            fontWeight: "bold",
+            fill: "#ffffff",
+            originX: "center",
+            originY: "center",
+            top: 1 // Slight visual adjustment
+          });
+
+          // 3. Group them
+          return new Group([rect, label], {
+            angle: angle,
+            left: left,
+            top: top,
+            originX: "center",
+            originY: "center",
+            selectable: false,
+            evented: false, // Click-through
+            opacity: 0.95
+          });
+        };
+
+        // Note: Coordinates are tweaked to ensure the strip covers the corner nicely
+        
+        // 1. Top Left 
+        canvas.add(createCornerLabel("CONVERSE", -45, offset, offset));
+
+        // 2. Top Right
+        canvas.add(createCornerLabel("CONVERSE", 45, POSTER_WIDTH - offset, offset));
+
+        // 3. Bottom Left
+        canvas.add(createCornerLabel("CONVERSE", 45, offset, POSTER_HEIGHT - offset));
+
+        // 4. Bottom Right
+        canvas.add(createCornerLabel("CONVERSE", -45, POSTER_WIDTH - offset, POSTER_HEIGHT - offset));
+
         canvas.renderAll();
 
         setIsLoading(false);
@@ -212,22 +260,20 @@ export default function PosterEditor() {
   const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!fabricRef.current || !e.target.files?.[0]) return;
     
-    // Check cooldown
     if (cooldown > 0) {
         alert(`Please wait ${cooldown} seconds before replacing.`);
         return;
     }
 
     const file = e.target.files[0];
-    e.target.value = ""; // Reset input so same file can be selected again if needed
+    e.target.value = ""; 
     
-    setIsProcessing(true); // Start Loading Overlay
+    setIsProcessing(true); 
 
-    // 1. Prepare Form Data
     const formData = new FormData();
     formData.append("image", file);
 
-    // 2. Call Server Action
+    // Call API
     const result = await uploadToAnimeApi(formData);
 
     if (!result.success || !result.imageUrl) {
@@ -236,44 +282,55 @@ export default function PosterEditor() {
         return;
     }
 
-    // 3. Paint returned URL to Canvas
     const { FabricImage } = await import("fabric");
     
-    // IMPORTANT: CrossOrigin is needed for external images to allow export (toDataURL)
-    const img = await FabricImage.fromURL(result.imageUrl, {
-        crossOrigin: "anonymous" 
-    });
+    // Create image element first to safely handle crossOrigin
+    const imgElement = new Image();
+    imgElement.crossOrigin = "anonymous";
+    imgElement.src = result.imageUrl;
 
-    const objects = fabricRef.current.getObjects();
-    const oldPhoto = objects.find((o: any) => o.name === "user_photo");
-    const uploadBtn = objects.find((o: any) => o.name === "upload_trigger");
+    imgElement.onload = async () => {
+        const img = new FabricImage(imgElement);
 
-    if (oldPhoto) fabricRef.current.remove(oldPhoto);
-    if (uploadBtn) fabricRef.current.remove(uploadBtn);
+        const objects = fabricRef.current.getObjects();
+        const oldPhoto = objects.find((o: any) => o.name === "user_photo");
+        const uploadBtn = objects.find((o: any) => o.name === "upload_trigger");
 
-    img.set({
-      left: 367,
-      top: 446,
-      scaleX: 0.61,
-      scaleY: 0.62,
-      originX: "center",
-      originY: "center",
-      transparentCorners: false,
-      cornerColor: "#ff0000",
-      borderColor: "#ff0000",
-    });
+        if (oldPhoto) fabricRef.current.remove(oldPhoto);
+        if (uploadBtn) fabricRef.current.remove(uploadBtn);
 
-    img.set("name", "user_photo");
+        img.set({
+            left: 367,
+            top: 446,
+            scaleX: 0.61,
+            scaleY: 0.62,
+            originX: "center",
+            originY: "center",
+            transparentCorners: false,
+            cornerColor: "#ff0000",
+            borderColor: "#ff0000",
+        });
 
-    fabricRef.current.add(img);
-    fabricRef.current.sendObjectToBack(img);
-    fabricRef.current.setActiveObject(img);
-    fabricRef.current.requestRenderAll();
+        img.set("name", "user_photo");
 
-    // 4. Update State & Start Cooldown
-    setHasPhoto(true);
-    setIsProcessing(false);
-    setCooldown(COOLDOWN_TIME);
+        // Add to canvas but send backward
+        fabricRef.current.add(img);
+        
+        // Move to index 1 (above bg template, below text and watermarks)
+        img.moveTo(1); 
+
+        fabricRef.current.setActiveObject(img);
+        fabricRef.current.requestRenderAll();
+
+        setHasPhoto(true);
+        setIsProcessing(false);
+        setCooldown(COOLDOWN_TIME);
+    };
+
+    imgElement.onerror = () => {
+        setIsProcessing(false);
+        alert("Error loading the generated image.");
+    }
   };
 
   const download = () => {
@@ -312,7 +369,6 @@ export default function PosterEditor() {
           className="relative w-full max-w-[340px] bg-white shadow-2xl rounded-sm border border-gray-200 shrink-0 overflow-hidden"
           style={{ height: "500px" }}
         >
-            {/* INITIAL LOADING */}
           {isLoading && (
             <div className="absolute inset-0 z-20 bg-gray-50 flex flex-col items-center justify-center gap-3">
               <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
@@ -322,12 +378,9 @@ export default function PosterEditor() {
             </div>
           )}
 
-          {/* API PROCESSING LOADING (Gradient Overlay) */}
           {isProcessing && (
             <div className="absolute inset-0 z-50 flex flex-col items-center justify-center animate-in fade-in duration-300">
-               {/* Gradient Background with blur */}
                <div className="absolute inset-0 bg-white/20 backdrop-blur-md" />
-               
                <div className="relative z-10 flex flex-col items-center gap-4 text-black p-6">
                  <Loader2 className="w-12 h-12 animate-spin text-black/90" />
                  <div className="text-center">
@@ -342,7 +395,6 @@ export default function PosterEditor() {
             <canvas ref={canvasEl} className="block" />
           </div>
 
-          {/* FLOATING PENCIL BUTTON (Disabled if cooldown) */}
           {hasPhoto && !isLoading && !isEditingText && !isProcessing && (
             <button
               onClick={triggerUpload}

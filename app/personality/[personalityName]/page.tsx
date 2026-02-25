@@ -67,7 +67,6 @@ const personality = async ({
   const personality: Personality = personalityData?.data;
   if (!personality) redirect("/");
   const jsonLd = getPersonalityPageSchema(personality);
-
   return (
     <>
       <Script

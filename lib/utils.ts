@@ -28,6 +28,22 @@ export const NavLinks = [
   },
 ];
 
+export const PosterNavLinks = [
+  {
+    label: "Features",
+    route: "#features",
+  },
+  {
+    label: "How it Works",
+    route: "#how-it-works",
+  },
+  {
+    label: "Gallery",
+    route: "#gallery",
+  },
+  
+];
+
 export const celebs = [
   { name: "Salman Khan", img: "/celebs/salman.jpeg" },
   { name: "Amitabh Bachchan", img: "/celebs/amit.webp" },
