@@ -1,4 +1,3 @@
-
 import FAQ from "@/components/poster/Faq";
 import Navbar from "@/components/poster/Navbar";
 import { Upload, Wand2, Download, Zap, Shield, Type } from "lucide-react";
@@ -43,184 +42,234 @@ const faq = [
   },
 ];
 
-const Page = () => {
-  return (
-    <main className="w-full flex flex-col items-center bg-[#E6E4D5] overflow-x-hidden">
-      {/* SECTION 1: HERO */}
-      <section className="flex flex-col items-center mx-auto lg:pt-4 pt-4 pb-16 lg:pb-24 px-4 lg:px-6 lg:gap-24 gap-12 w-full min-h-screen lg:h-screen">
-        <Navbar />
-        <div className="flex flex-col lg:flex-row items-center w-full justify-between px-2 sm:px-8 lg:px-32 gap-12 lg:gap-0 mt-8 lg:mt-0">
-          <header className="flex flex-col justify-center gap-6 text-center lg:text-left">
-            <h1
-              className={`text-black text-5xl sm:text-6xl lg:text-8xl font-black m-0 leading-[1.1] ${noto_sans.className}`}
-            >
-              Create Your Own
-              <br className="hidden lg:block" />
-              <span>Wanted Poster</span>
-            </h1>
-            <h2 className="text-lg lg:text-xl font-medium text-gray-800 max-w-2xl">
-              Upload your selfie and let our AI instantly animefy it into a 
-              high-definition pirate wanted poster. Customize your name and bounty 
-              with no design skills required.
-            </h2>
-            <div className="flex justify-center lg:justify-start">
-              <button className="rounded-full px-8 py-4 text-lg bg-white border-black border-2 w-fit font-bold hover:bg-gray-100 transition-colors cursor-pointer">
-                Create Poster
-              </button>
-            </div>
-          </header>
-          {/* Hero Image Placeholder */}
-          <figure className="w-full max-w-[320px] sm:max-w-[400px] aspect-[2/3] rounded-md bg-red-300 bg-[url('https://placehold.co/400x600/7f1d1d/ffffff?text=Wanted+Poster')] bg-cover bg-center border-4 border-black shadow-lg"></figure>
+const Hero = () => (
+  <section className="flex flex-col items-center mx-auto lg:pt-4 pt-4 pb-16 lg:pb-24 px-4 lg:px-6 lg:gap-24 gap-12 w-full min-h-screen lg:h-screen">
+    <Navbar />
+    <div className="flex flex-col lg:flex-row items-center w-full justify-between px-2 sm:px-8 lg:px-32 gap-12 lg:gap-0 mt-8 lg:mt-0">
+      <header className="flex flex-col justify-center gap-6 text-center lg:text-left">
+        <h1
+          className={`text-black text-4xl sm:text-4xl lg:text-8xl font-black m-0 leading-[1.1] ${noto_sans.className}`}
+        >
+          Create Your Own
+          <br className="block" />
+          <span className="max-lg:text-4xl text-red-600">Wanted Poster</span>
+        </h1>
+        <h2 className="text-lg lg:text-xl font-medium text-gray-800 max-w-2xl">
+          Upload your selfie and let our AI instantly animefy it into a
+          high-definition pirate wanted poster. Customize your name and
+          bounty with no design skills required.
+        </h2>
+        <div className="flex justify-center lg:justify-start">
+          <button className="rounded-full px-8 py-4 text-lg bg-white border-black border-2 w-fit font-bold hover:bg-gray-100 transition-colors cursor-pointer">
+            Create Poster
+          </button>
         </div>
-      </section>
+      </header>
+      <figure className="w-full max-w-[320px] sm:max-w-[400px] aspect-[2/3] rounded-md bg-red-600 border-4 border-black shadow-lg"></figure>
+    </div>
+  </section>
+);
 
-      {/* SECTION 2: HOW IT WORKS */}
-      <section className="flex flex-col items-center w-full justify-center px-4 sm:px-8 lg:px-32 bg-white border-y-8 border-black h-full py-20 lg:py-32">
-        <header className="flex flex-col items-center justify-center gap-4 text-center">
-          <span className="bg-gray-200 border-2 border-black rounded-full px-4 py-1.5 font-bold shadow-lg text-sm uppercase">
-            How it Works
-          </span>
-          <h2 className="text-4xl lg:text-6xl font-bold m-0 text-balance">
-            Create Poster in 3 Easy Steps
-          </h2>
-          <p className="text-lg lg:text-xl font-medium text-gray-600 mt-4 lg:mt-6 px-4 lg:px-52 text-balance">
-            Our AI-powered generator makes it incredibly simple to turn yourself into a legendary anime character. Just follow these steps to claim your bounty.
-          </p>
-        </header>
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-16 mt-16 lg:mt-24 w-full">
-          <article className="rounded-lg border-2 border-black shadow-sm flex flex-col p-8 justify-center w-full lg:w-1/3 text-center lg:text-left bg-gray-50">
-            <div className="flex justify-center lg:justify-start">
-              <Upload size={56} strokeWidth={1.5} />
-            </div>
-            <h3 className="text-2xl m-0 font-bold mt-8">1. Upload Selfie</h3>
-            <p className="text-lg lg:text-xl mt-4 font-medium text-gray-800">
-              Upload a clear photo of yourself. Good lighting helps the AI capture your best features.
-            </p>
-          </article>
-
-          <article className="rounded-lg border-2 border-black shadow-sm flex flex-col p-8 justify-center w-full lg:w-1/3 text-center lg:text-left bg-gray-50">
-            <div className="flex justify-center lg:justify-start">
-              <Wand2 size={56} strokeWidth={1.5} />
-            </div>
-            <h3 className="text-2xl m-0 font-bold mt-8">2. AI Animefy & Edit</h3>
-            <p className="text-lg lg:text-xl mt-4 font-medium text-gray-800">
-              Watch as our system transforms you into anime art. Customize the text with your name.
-            </p>
-          </article>
-
-          <article className="rounded-lg border-2 border-black shadow-sm flex flex-col p-8 justify-center w-full lg:w-1/3 text-center lg:text-left bg-gray-50">
-            <div className="flex justify-center lg:justify-start">
-              <Download size={56} strokeWidth={1.5} />
-            </div>
-            <h3 className="text-2xl m-0 font-bold mt-8">3. Download Poster</h3>
-            <p className="text-lg lg:text-xl mt-4 font-medium text-gray-800">
-              Instantly save your high-resolution pirate wanted poster to share or print.
-            </p>
-          </article>
+const HowItWorks = () => (
+  <section className="flex flex-col items-center w-full justify-center px-4 sm:px-8 lg:px-32 bg-white border-y-8 border-black h-full py-20 lg:py-32">
+    <header className="flex flex-col items-center justify-center gap-4 text-center">
+      <span className="bg-gray-200 border-2 border-black rounded-full px-4 py-1.5 font-bold shadow-lg text-sm uppercase">
+        How it Works
+      </span>
+      <h2 className="text-4xl lg:text-6xl font-bold m-0 text-balance">
+        Create Poster in 3 Easy Steps
+      </h2>
+      <p className="text-lg lg:text-xl font-medium text-gray-600 mt-4 lg:mt-6 px-4 lg:px-52 text-balance">
+        Our AI-powered generator makes it incredibly simple to turn yourself
+        into a legendary anime character. Just follow these steps to claim
+        your bounty.
+      </p>
+    </header>
+    <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-16 mt-16 lg:mt-24 w-full">
+      <article className="rounded-lg border-2 border-black shadow-sm flex flex-col p-8 justify-center w-full lg:w-1/3 text-center lg:text-left bg-gray-50">
+        <div className="flex justify-center lg:justify-start">
+          <Upload size={56} strokeWidth={1.5} />
         </div>
-      </section>
+        <h3 className="text-2xl m-0 font-bold mt-8">1. Upload Selfie</h3>
+        <p className="text-lg lg:text-xl mt-4 font-medium text-gray-800">
+          Upload a clear photo of yourself. Good lighting helps the AI
+          capture your best features.
+        </p>
+      </article>
 
-      {/* SECTION 3: FEATURES */}
-      <section className="flex flex-col items-center w-full justify-center shrink-0 px-4 sm:px-8 lg:px-32 border-black bg-[#E6E4D5] py-20 lg:py-32">
-        <header className="flex flex-col items-center justify-center gap-4 text-center">
-          <span className="bg-gray-200 border-2 border-black rounded-full px-4 py-1.5 font-bold shadow-lg text-sm uppercase">
-            Key Features
-          </span>
-          <h2 className="text-4xl lg:text-6xl font-bold m-0 text-balance">
-            Power Packed Features
-          </h2>
-        </header>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-full items-stretch justify-between gap-8 lg:gap-16 mt-16 lg:mt-24">
-          {[
-            { icon: Wand2, title: "Instant Anime Style", desc: "State-of-the-art AI accurately maps your features to anime art." },
-            { icon: Type, title: "Custom Poster Text", desc: "Easily edit the poster to display your own unique pirate name." },
-            { icon: Download, title: "HD Print Quality", desc: "Download high-resolution files perfect for framing or posters." },
-            { icon: Zap, title: "Lightning Fast", desc: "Get your fully generated artwork in just a matter of seconds." },
-            { icon: Shield, title: "100% Secure", desc: "Photos are deleted immediately after your poster is created." },
-            { icon: Upload, title: "Easy Upload", desc: "Works seamlessly on both mobile and desktop devices." },
-          ].map((feature, i) => (
-            <article key={i} className="rounded-lg border-2 border-black overflow-hidden shadow-sm flex flex-col bg-white h-full">
-              <div className="w-24 h-24 lg:w-32 lg:h-32 rounded-br-2xl bg-black flex items-center justify-center shrink-0">
-                <feature.icon size={40} color="white" className="lg:w-12 lg:h-12" />
-              </div>
-              <div className="flex justify-center gap-2 lg:gap-4 flex-col p-6 lg:p-8 grow">
-                <h3 className="text-xl m-0 font-bold">{feature.title}</h3>
-                <p className="text-base lg:text-lg mt-2 font-medium text-gray-800">
-                  {feature.desc}
-                </p>
-              </div>
-            </article>
-          ))}
+      <article className="rounded-lg border-2 border-black shadow-sm flex flex-col p-8 justify-center w-full lg:w-1/3 text-center lg:text-left bg-gray-50">
+        <div className="flex justify-center lg:justify-start">
+          <Wand2 size={56} strokeWidth={1.5} />
         </div>
-      </section>
+        <h3 className="text-2xl m-0 font-bold mt-8">
+          2. AI Animefy & Edit
+        </h3>
+        <p className="text-lg lg:text-xl mt-4 font-medium text-gray-800">
+          Watch as our system transforms you into anime art. Customize the
+          text with your name.
+        </p>
+      </article>
 
-      {/* SECTION 4: GALLERY */}
-      <section className="flex flex-col items-center w-full justify-center bg-white border-y-8 border-black shrink-0 py-20 lg:py-32 overflow-hidden">
-        <header className="flex flex-col items-center justify-center gap-4 px-4 text-center">
-          <span className="bg-gray-200 border-2 border-black rounded-full px-4 py-1.5 font-bold shadow-lg text-sm uppercase">
-            Our Works
-          </span>
-          <h2 className="text-4xl lg:text-6xl font-bold m-0">Gallery</h2>
-          <p className="text-lg font-medium text-gray-600 mt-2 text-balance">
-            See how ordinary selfies transform into legendary bounties.
-          </p>
-        </header>
+      <article className="rounded-lg border-2 border-black shadow-sm flex flex-col p-8 justify-center w-full lg:w-1/3 text-center lg:text-left bg-gray-50">
+        <div className="flex justify-center lg:justify-start">
+          <Download size={56} strokeWidth={1.5} />
+        </div>
+        <h3 className="text-2xl m-0 font-bold mt-8">3. Download Poster</h3>
+        <p className="text-lg lg:text-xl mt-4 font-medium text-gray-800">
+          Instantly save your high-resolution pirate wanted poster to share
+          or print.
+        </p>
+      </article>
+    </div>
+  </section>
+);
 
-        <div className="w-full h-fit overflow-hidden mt-16 lg:mt-24">
-          <div className="flex w-fit h-fit animate-marquee hover:[animation-play-state:paused]">
-            <div className="flex shrink-0">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((_, i) => (
-                <GalleryCard key={`batch1-${i}`} />
-              ))}
-            </div>
-            <div className="flex shrink-0" aria-hidden="true">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((_, i) => (
-                <GalleryCard key={`batch2-${i}`} />
-              ))}
-            </div>
+const Features = () => (
+  <section className="flex flex-col items-center w-full justify-center shrink-0 px-4 sm:px-8 lg:px-32 border-black bg-[#E6E4D5] py-20 lg:py-32">
+    <header className="flex flex-col items-center justify-center gap-4 text-center">
+      <span className="bg-gray-200 border-2 border-black rounded-full px-4 py-1.5 font-bold shadow-lg text-sm uppercase">
+        Key Features
+      </span>
+      <h2 className="text-4xl lg:text-6xl font-bold m-0 text-balance">
+        Power Packed Features
+      </h2>
+    </header>
+
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-full items-stretch justify-between gap-4 lg:gap-16 mt-16 lg:mt-24">
+      {[
+        {
+          icon: Wand2,
+          title: "Instant Anime Style",
+          desc: "State-of-the-art AI accurately maps your features to anime art.",
+        },
+        {
+          icon: Type,
+          title: "Custom Poster Text",
+          desc: "Easily edit the poster to display your own unique pirate name.",
+        },
+        {
+          icon: Download,
+          title: "HD Print Quality",
+          desc: "Download high-resolution files perfect for framing or posters.",
+        },
+        {
+          icon: Zap,
+          title: "Lightning Fast",
+          desc: "Get your fully generated artwork in just a matter of seconds.",
+        },
+        {
+          icon: Shield,
+          title: "100% Secure",
+          desc: "Photos are deleted immediately after your poster is created.",
+        },
+        {
+          icon: Upload,
+          title: "Easy Upload",
+          desc: "Works seamlessly on both mobile and desktop devices.",
+        },
+      ].map((feature, i) => (
+        <article
+          key={i}
+          className="rounded-lg border-2 border-black overflow-hidden shadow-sm flex flex-row lg:flex-col bg-white h-full"
+        >
+          <div className="w-24 lg:w-32 lg:h-32 lg:rounded-br-2xl lg:rounded-tr-none bg-black flex items-center justify-center shrink-0 self-stretch lg:self-auto">
+            <feature.icon
+              size={32}
+              color="white"
+              className="lg:w-12 lg:h-12"
+            />
           </div>
-        </div>
-
-        <div className="w-full overflow-hidden mt-8 lg:mt-12">
-          <div className="flex w-fit animate-marquee_reverse hover:[animation-play-state:paused]">
-            <div className="flex shrink-0">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((_, i) => (
-                <GalleryCard key={`batch3-${i}`} />
-              ))}
-            </div>
-            <div className="flex shrink-0" aria-hidden="true">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((_, i) => (
-                <GalleryCard key={`batch4-${i}`} />
-              ))}
-            </div>
+          <div className="flex justify-center gap-1 lg:gap-4 flex-col p-4 lg:p-8 grow text-left">
+            <h3 className="text-lg lg:text-xl m-0 font-bold">
+              {feature.title}
+            </h3>
+            <p className="text-sm lg:text-lg mt-1 lg:mt-2 font-medium text-gray-800">
+              {feature.desc}
+            </p>
           </div>
-        </div>
-      </section>
+        </article>
+      ))}
+    </div>
+  </section>
+);
 
-      {/* SECTION 5: FAQ */}
-      <section className="flex flex-col items-center w-full justify-center shrink-0 px-4 sm:px-8 lg:px-32 border-black bg-[#E6E4D5] py-20 lg:py-32">
-        <header className="flex flex-col items-center justify-center gap-4 text-center mb-12 lg:mb-16">
-          <span className="bg-gray-200 border-2 border-black rounded-full px-4 py-1.5 font-bold shadow-lg text-sm uppercase">
-            Support
-          </span>
-          <h2 className="text-4xl lg:text-6xl font-bold m-0 text-balance">
-            Frequently Asked Questions
-          </h2>
-        </header>
-        <div className="w-full max-w-4xl">
-          <FAQ data={faq} />
-        </div>
-      </section>
-    </main>
-  );
-};
-
-{/* Kept your exact two-box nested design, but added standard placeholder images to demonstrate the Before/After clearly */}
 const GalleryCard = () => {
   return (
     <figure className="w-60 h-72 lg:w-64 lg:h-80 mx-3 lg:mx-6 bg-red-300 relative rounded-md overflow-hidden border-2 border-black shrink-0 bg-[url('https://placehold.co/400x600/e2e8f0/1e293b?text=Output+Poster')] bg-cover bg-center">
       <div className="w-28 h-36 lg:w-32 lg:h-40 bg-green-300 absolute rounded-tr-md bottom-0 left-0 border-t-2 border-r-2 border-black bg-[url('https://placehold.co/200x300/cbd5e1/475569?text=Selfie')] bg-cover bg-center"></div>
     </figure>
+  );
+};
+
+const Gallery = () => (
+  <section className="flex flex-col items-center w-full justify-center bg-white border-y-8 border-black shrink-0 py-20 lg:py-32 overflow-hidden">
+    <header className="flex flex-col items-center justify-center gap-4 px-4 text-center">
+      <span className="bg-gray-200 border-2 border-black rounded-full px-4 py-1.5 font-bold shadow-lg text-sm uppercase">
+        Our Works
+      </span>
+      <h2 className="text-4xl lg:text-6xl font-bold m-0">Gallery</h2>
+      <p className="text-lg font-medium text-gray-600 mt-2 text-balance">
+        See how ordinary selfies transform into legendary bounties.
+      </p>
+    </header>
+
+    <div className="w-full h-fit overflow-hidden mt-16 lg:mt-24">
+      <div className="flex w-fit h-fit animate-marquee hover:[animation-play-state:paused]">
+        <div className="flex shrink-0">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((_, i) => (
+            <GalleryCard key={`batch1-${i}`} />
+          ))}
+        </div>
+        <div className="flex shrink-0" aria-hidden="true">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((_, i) => (
+            <GalleryCard key={`batch2-${i}`} />
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <div className="w-full overflow-hidden mt-8 lg:mt-12">
+      <div className="flex w-fit animate-marquee_reverse hover:[animation-play-state:paused]">
+        <div className="flex shrink-0">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((_, i) => (
+            <GalleryCard key={`batch3-${i}`} />
+          ))}
+        </div>
+        <div className="flex shrink-0" aria-hidden="true">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((_, i) => (
+            <GalleryCard key={`batch4-${i}`} />
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
+const FaqSection = () => (
+  <section className="flex flex-col items-center w-full justify-center shrink-0 px-4 sm:px-8 lg:px-32 border-black bg-[#E6E4D5] py-20 lg:py-32">
+    <header className="flex flex-col items-center justify-center gap-4 text-center mb-12 lg:mb-16">
+      <span className="bg-gray-200 border-2 border-black rounded-full px-4 py-1.5 font-bold shadow-lg text-sm uppercase">
+        Support
+      </span>
+      <h2 className="text-4xl lg:text-6xl font-bold m-0 text-balance">
+        Frequently Asked Questions
+      </h2>
+    </header>
+    <div className="w-full max-w-4xl">
+      <FAQ data={faq} />
+    </div>
+  </section>
+);
+
+const Page = () => {
+  return (
+    <main className="w-full flex flex-col items-center bg-[#E6E4D5] overflow-x-hidden">
+      <Hero />
+      <HowItWorks />
+      <Features />
+      <Gallery />
+      <FaqSection />
+    </main>
   );
 };
 
