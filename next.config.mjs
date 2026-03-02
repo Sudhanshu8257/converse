@@ -12,6 +12,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: "backend-sepia-omega.vercel.app",
       },
+         {
+        protocol: 'https',
+        hostname: "ik.imagekit.io",
+      },
     ],
     // Optional: Protect your memory by limiting allowed output sizes
     deviceSizes: [640, 750, 828, 1080, 1200],

@@ -21,7 +21,7 @@ export default function PosterEditor() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [hasPhoto, setHasPhoto] = useState(false);
   const [isEditingText, setIsEditingText] = useState(false);
-  
+
   // Cooldown State
   const [cooldown, setCooldown] = useState(0);
 
@@ -63,7 +63,14 @@ export default function PosterEditor() {
       if (!canvasEl.current) return;
 
       try {
-        const { Canvas, FabricImage, IText, Rect, Group, Object: FabricObject } = await import("fabric");
+        const {
+          Canvas,
+          FabricImage,
+          IText,
+          Rect,
+          Group,
+          Object: FabricObject,
+        } = await import("fabric");
         if (!isMounted) return;
 
         // --- CUSTOMIZE CONTROLS ---
@@ -75,7 +82,7 @@ export default function PosterEditor() {
         FabricObject.prototype.cornerSize = 12;
 
         const fontName = "WantedPrint";
-        const fontUrl = "url(/fonts/Aldine.otf)"; 
+        const fontUrl = "url(/fonts/Aldine.otf)";
         const printFont = new FontFace(fontName, fontUrl);
         try {
           await printFont.load();
@@ -136,7 +143,7 @@ export default function PosterEditor() {
 
         uploadGroup.set("name", "upload_trigger");
         uploadGroup.on("mousedown", () => {
-            fileInputRef.current?.click()
+          fileInputRef.current?.click();
         });
         canvas.add(uploadGroup);
 
@@ -178,7 +185,12 @@ export default function PosterEditor() {
         const stripColor = "#0046ad"; // Converse Blue
         const offset = 75; // Distance from corner
 
-        const createCornerLabel = (text: string, angle: number, left: number, top: number) => {
+        const createCornerLabel = (
+          text: string,
+          angle: number,
+          left: number,
+          top: number,
+        ) => {
           // 1. The Blue Strip
           const rect = new Rect({
             width: 300,
@@ -196,7 +208,7 @@ export default function PosterEditor() {
             fill: "#ffffff",
             originX: "center",
             originY: "center",
-            top: 1 // Slight visual adjustment
+            top: 1, // Slight visual adjustment
           });
 
           // 3. Group them
@@ -208,23 +220,34 @@ export default function PosterEditor() {
             originY: "center",
             selectable: false,
             evented: false, // Click-through
-            opacity: 0.95
+            opacity: 0.95,
           });
         };
 
         // Note: Coordinates are tweaked to ensure the strip covers the corner nicely
-        
-        // 1. Top Left 
+
+        // 1. Top Left
         canvas.add(createCornerLabel("CONVERSE", -45, offset, offset));
 
         // 2. Top Right
-        canvas.add(createCornerLabel("CONVERSE", 45, POSTER_WIDTH - offset, offset));
+        canvas.add(
+          createCornerLabel("CONVERSE", 45, POSTER_WIDTH - offset, offset),
+        );
 
         // 3. Bottom Left
-        canvas.add(createCornerLabel("CONVERSE", 45, offset, POSTER_HEIGHT - offset));
+        canvas.add(
+          createCornerLabel("CONVERSE", 45, offset, POSTER_HEIGHT - offset),
+        );
 
         // 4. Bottom Right
-        canvas.add(createCornerLabel("CONVERSE", -45, POSTER_WIDTH - offset, POSTER_HEIGHT - offset));
+        canvas.add(
+          createCornerLabel(
+            "CONVERSE",
+            -45,
+            POSTER_WIDTH - offset,
+            POSTER_HEIGHT - offset,
+          ),
+        );
 
         canvas.renderAll();
 
@@ -259,94 +282,190 @@ export default function PosterEditor() {
 
   const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     if (!fabricRef.current || !e.target.files?.[0]) return;
-    
+
     if (cooldown > 0) {
-        alert(`Please wait ${cooldown} seconds before replacing.`);
-        return;
+      alert(`Please wait ${cooldown} seconds before replacing.`);
+      return;
     }
 
     const file = e.target.files[0];
-    e.target.value = ""; 
-    
-    setIsProcessing(true); 
+    e.target.value = "";
+
+    setIsProcessing(true);
 
     const formData = new FormData();
     formData.append("image", file);
 
     // Call API
-    const result = await uploadToAnimeApi(formData);
+    // const result = await uploadToAnimeApi(formData);
 
-    if (!result.success || !result.imageUrl) {
-        setIsProcessing(false);
-        alert("Failed to process image. Please try again.");
-        return;
-    }
+    // if (!result.success || !result.imageUrl) {
+    //   setIsProcessing(false);
+    //   alert("Failed to process image. Please try again.");
+    //   return;
+    // }
 
     const { FabricImage } = await import("fabric");
-    
+
     // Create image element first to safely handle crossOrigin
     const imgElement = new Image();
     imgElement.crossOrigin = "anonymous";
-    imgElement.src = result.imageUrl;
+    // imgElement.src = result.imageUrl;
+    imgElement.src = "https://ik.imagekit.io/r8pra5q2fr/anime-generated/anime_1772120312730_QvGuCHlOf.png?updatedAt=1772120315137";
+
+    // imgElement.onload = async () => {
+    //   const img = new FabricImage(imgElement);
+
+    //   const objects = fabricRef.current.getObjects();
+    //   const oldPhoto = objects.find((o: any) => o.name === "user_photo");
+    //   const uploadBtn = objects.find((o: any) => o.name === "upload_trigger");
+
+    //   if (oldPhoto) fabricRef.current.remove(oldPhoto);
+    //   if (uploadBtn) fabricRef.current.remove(uploadBtn);
+
+    //   img.set({
+    //     left: 367,
+    //     top: 446,
+    //     scaleX: 0.61,
+    //     scaleY: 0.62,
+    //     originX: "center",
+    //     originY: "center",
+    //     transparentCorners: false,
+    //     cornerColor: "#ff0000",
+    //     borderColor: "#ff0000",
+    //   });
+
+    //   img.set("name", "user_photo");
+
+    //   // Add to canvas but send backward
+    //   fabricRef.current.add(img);
+
+    //   // Move to index 1 (above bg template, below text and watermarks)
+    //   img.moveTo(1);
+
+    //   fabricRef.current.setActiveObject(img);
+    //   fabricRef.current.requestRenderAll();
+
+    //   setHasPhoto(true);
+    //   setIsProcessing(false);
+    //   setCooldown(COOLDOWN_TIME);
+    // };
+
 
     imgElement.onload = async () => {
-        const img = new FabricImage(imgElement);
+      const img = new FabricImage(imgElement);
 
-        const objects = fabricRef.current.getObjects();
-        const oldPhoto = objects.find((o: any) => o.name === "user_photo");
-        const uploadBtn = objects.find((o: any) => o.name === "upload_trigger");
+      const objects = fabricRef.current.getObjects();
+      const oldPhoto = objects.find((o: any) => o.name === "user_photo");
+      const uploadBtn = objects.find((o: any) => o.name === "upload_trigger");
 
-        if (oldPhoto) fabricRef.current.remove(oldPhoto);
-        if (uploadBtn) fabricRef.current.remove(uploadBtn);
+      if (oldPhoto) fabricRef.current.remove(oldPhoto);
+      if (uploadBtn) fabricRef.current.remove(uploadBtn);
 
-        img.set({
-            left: 367,
-            top: 446,
-            scaleX: 0.61,
-            scaleY: 0.62,
-            originX: "center",
-            originY: "center",
-            transparentCorners: false,
-            cornerColor: "#ff0000",
-            borderColor: "#ff0000",
-        });
+      img.set({
+        left: 367,
+        top: 446,
+        scaleX: 0.61,
+        scaleY: 0.62,
+        originX: "center",
+        originY: "center",
+        transparentCorners: false,
+        cornerColor: "#ff0000",
+        borderColor: "#ff0000",
+      });
 
-        img.set("name", "user_photo");
+      img.set("name", "user_photo");
 
-        // Add to canvas but send backward
-        fabricRef.current.add(img);
-        
-        // Move to index 1 (above bg template, below text and watermarks)
-        img.moveTo(1); 
+      fabricRef.current.add(img);
+      fabricRef.current.sendObjectToBack(img);
 
-        fabricRef.current.setActiveObject(img);
-        fabricRef.current.requestRenderAll();
 
-        setHasPhoto(true);
-        setIsProcessing(false);
-        setCooldown(COOLDOWN_TIME);
+      fabricRef.current.setActiveObject(img);
+      fabricRef.current.requestRenderAll();
+
+      setHasPhoto(true);
+      setIsProcessing(false);
+      setCooldown(COOLDOWN_TIME);
     };
 
     imgElement.onerror = () => {
-        setIsProcessing(false);
-        alert("Error loading the generated image.");
-    }
+      setIsProcessing(false);
+      alert("Error loading the generated image.");
+    };
   };
 
-  const download = () => {
-    if (!fabricRef.current) return;
-    fabricRef.current.discardActiveObject();
-    fabricRef.current.requestRenderAll();
+  // const download = () => {
+  //   if (!fabricRef.current) return;
+  //   fabricRef.current.discardActiveObject();
+  //   fabricRef.current.requestRenderAll();
 
-    const link = document.createElement("a");
-    link.download = "wanted-poster.png";
-    link.href = fabricRef.current.toDataURL({
-      format: "png",
-      multiplier: 1,
-      quality: 1,
+  //   const link = document.createElement("a");
+  //   link.download = "wanted-poster.png";
+  //   link.href = fabricRef.current.toDataURL({
+  //     format: "png",
+  //     multiplier: 1,
+  //     quality: 1,
+  //   });
+  //   link.click();
+  // };
+
+  const download = async () => {
+  if (!fabricRef.current || !hasPhoto) return;
+
+  // Deselect objects so handles don't appear in export
+  fabricRef.current.discardActiveObject();
+  fabricRef.current.requestRenderAll();
+
+  // Get canvas state
+  const canvasImage = fabricRef.current.toDataURL({
+    format: "png",
+    multiplier: 1,
+    quality: 1,
+  });
+
+  // Get text object state
+  const objects = fabricRef.current.getObjects();
+  const nameText = objects.find((o: any) => o.type === "i-text" && o.text !== "Click to Upload");
+  const userPhoto = objects.find((o: any) => o.name === "user_photo");
+
+  const payload = {
+    canvasImage,
+    posterName: nameText?.text || "WANTED",
+    textSize: nameText?.fontSize || 90,
+    textPosition: {
+      x: nameText?.left || 362,
+      y: nameText?.top || 845,
+    },
+    imagePosition: {
+      x: userPhoto?.left || PHOTO_X,
+      y: userPhoto?.top || PHOTO_Y,
+    },
+    imageSize: {
+      width: (userPhoto?.width || 0) * (userPhoto?.scaleX || 1),
+      height: (userPhoto?.height || 0) * (userPhoto?.scaleY || 1),
+    },
+  };
+
+  try {
+    setIsProcessing(true);
+    const res = await fetch(`http://localhost:4000/api/v1/poster/save-session`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
     });
-    link.click();
-  };
+
+    const data = await res.json();
+
+    if (!data.checkoutUrl) throw new Error("No checkout URL");
+
+    // Redirect to Stripe Checkout
+    window.location.href = data.checkoutUrl;
+  } catch (err) {
+    console.error(err);
+    alert("Something went wrong. Please try again.");
+    setIsProcessing(false);
+  }
+};
 
   const triggerUpload = () => {
     if (cooldown > 0) return;
@@ -354,7 +473,7 @@ export default function PosterEditor() {
   };
 
   return (
-    <div className="fixed inset-0 w-full h-full bg-gray-50 font-sans overflow-hidden">
+    <div className="fixed inset-0 w-full h-full bg-[#E0CFBA] font-sans overflow-hidden">
       <div
         className={`w-full h-full overflow-y-auto flex flex-col items-center p-4 transition-all duration-300 ${isEditingText ? "justify-start pt-4" : "justify-center"}`}
       >
@@ -380,14 +499,18 @@ export default function PosterEditor() {
 
           {isProcessing && (
             <div className="absolute inset-0 z-50 flex flex-col items-center justify-center animate-in fade-in duration-300">
-               <div className="absolute inset-0 bg-white/20 backdrop-blur-md" />
-               <div className="relative z-10 flex flex-col items-center gap-4 text-black p-6">
-                 <Loader2 className="w-12 h-12 animate-spin text-black/90" />
-                 <div className="text-center">
-                    <p className="text-lg font-bold tracking-wide">Generating Anime Art</p>
-                    <p className="text-sm text-black/70">Applying wanted poster filters...</p>
-                 </div>
-               </div>
+              <div className="absolute inset-0 bg-white/20 backdrop-blur-md" />
+              <div className="relative z-10 flex flex-col items-center gap-4 text-black p-6">
+                <Loader2 className="w-12 h-12 animate-spin text-black/90" />
+                <div className="text-center">
+                  <p className="text-lg font-bold tracking-wide">
+                    Generating Anime Art
+                  </p>
+                  <p className="text-sm text-black/70">
+                    Applying wanted poster filters...
+                  </p>
+                </div>
+              </div>
             </div>
           )}
 
@@ -400,15 +523,19 @@ export default function PosterEditor() {
               onClick={triggerUpload}
               disabled={cooldown > 0}
               className={`absolute z-30 top-[58%] right-[12%] p-2.5 rounded-full shadow-md border border-gray-200 transition-all
-                ${cooldown > 0 
-                  ? "bg-gray-200 text-gray-400 cursor-not-allowed" 
-                  : "bg-white text-gray-700 hover:bg-gray-50 active:scale-95"}`}
+                ${
+                  cooldown > 0
+                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    : "bg-white text-gray-700 hover:bg-gray-50 active:scale-95"
+                }`}
               title={cooldown > 0 ? `Wait ${cooldown}s` : "Replace Photo"}
             >
               {cooldown > 0 ? (
-                  <span className="font-bold text-xs w-5 h-5 flex items-center justify-center">{cooldown}</span>
+                <span className="font-bold text-xs w-5 h-5 flex items-center justify-center">
+                  {cooldown}
+                </span>
               ) : (
-                  <Pencil className="w-5 h-5" />
+                <Pencil className="w-5 h-5" />
               )}
             </button>
           )}
@@ -430,15 +557,26 @@ export default function PosterEditor() {
                 onClick={triggerUpload}
                 disabled={cooldown > 0 || isProcessing}
                 className={`flex-1 border py-3 px-4 rounded-lg font-semibold shadow-sm text-sm transition-all flex items-center justify-center gap-2
-                    ${cooldown > 0 
+                    ${
+                      cooldown > 0
                         ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
                         : "bg-white hover:bg-gray-50 text-gray-700 border-gray-300"
                     }`}
               >
-                 {cooldown > 0 ? <Lock className="w-4 h-4"/> : <ImagePlus className="w-4 h-4" />}
-                
+                {cooldown > 0 ? (
+                  <Lock className="w-4 h-4" />
+                ) : (
+                  <ImagePlus className="w-4 h-4" />
+                )}
+
                 <span>
-                    {isProcessing ? "Processing..." : hasPhoto ? (cooldown > 0 ? `Wait ${cooldown}s` : "Replace") : "Upload"}
+                  {isProcessing
+                    ? "Processing..."
+                    : hasPhoto
+                      ? cooldown > 0
+                        ? `Wait ${cooldown}s`
+                        : "Replace"
+                      : "Upload"}
                 </span>
               </button>
 
@@ -453,8 +591,8 @@ export default function PosterEditor() {
             </div>
 
             <p className="mt-4 text-gray-400 text-xs text-center font-medium max-w-[300px] shrink-0 pb-10">
-              {cooldown > 0 
-                ? `You can upload a new photo in ${cooldown} seconds.` 
+              {cooldown > 0
+                ? `You can upload a new photo in ${cooldown} seconds.`
                 : "Tap pencil to replace. Double tap text to edit."}
             </p>
           </>

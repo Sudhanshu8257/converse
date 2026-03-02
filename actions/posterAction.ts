@@ -15,9 +15,9 @@ export async function uploadToAnimeApi(formData: FormData) {
     }
 
     const data = await response.json();
-    
+    console.log(data)
     // Assuming the API returns { imageUrl: "..." }
-    return { success: true, imageUrl: `http://localhost:4000${data.imageUrl}` };
+    return { success: true, imageUrl: `${data.imageUrl}` };
     
   } catch (error) {
     console.error("API Error:", error);
