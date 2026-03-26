@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState, ChangeEvent } from "react";
 import { Download, Loader2, ImagePlus, Pencil, Lock } from "lucide-react";
-import { uploadToAnimeApi } from "@/actions/posterAction";
+import { saveSession, uploadToAnimeApi } from "@/actions/posterAction";
+import { toast } from "sonner";
 
 // --- CONSTANTS ---
 const POSTER_WIDTH = 724;
@@ -12,7 +13,13 @@ const PHOTO_Y = 446;
 const COOLDOWN_TIME = 60;
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
-export default function PosterEditor() {
+export default function PosterEditor({
+  sessionId,
+  sessionData,
+}: {
+  sessionId: string;
+  sessionData: string;
+}) {
   const canvasEl = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -181,7 +188,7 @@ export default function PosterEditor() {
           text: string,
           angle: number,
           left: number,
-          top: number
+          top: number,
         ) => {
           const rect = new Rect({
             width: 300,
@@ -215,9 +222,20 @@ export default function PosterEditor() {
         };
 
         canvas.add(createCornerLabel("CONVERSE", -45, offset, offset));
-        canvas.add(createCornerLabel("CONVERSE", 45, POSTER_WIDTH - offset, offset));
-        canvas.add(createCornerLabel("CONVERSE", 45, offset, POSTER_HEIGHT - offset));
-        canvas.add(createCornerLabel("CONVERSE", -45, POSTER_WIDTH - offset, POSTER_HEIGHT - offset));
+        canvas.add(
+          createCornerLabel("CONVERSE", 45, POSTER_WIDTH - offset, offset),
+        );
+        canvas.add(
+          createCornerLabel("CONVERSE", 45, offset, POSTER_HEIGHT - offset),
+        );
+        canvas.add(
+          createCornerLabel(
+            "CONVERSE",
+            -45,
+            POSTER_WIDTH - offset,
+            POSTER_HEIGHT - offset,
+          ),
+        );
 
         canvas.renderAll();
         setIsLoading(false);
@@ -261,19 +279,22 @@ export default function PosterEditor() {
 
     const formData = new FormData();
     formData.append("image", file);
+    formData.append("sessionId", sessionId);
 
-    const result = await uploadToAnimeApi(formData);
+    // const result = await uploadToAnimeApi(formData);
 
-    if (!result.success || !result.imageUrl) {
-      setIsProcessing(false);
-      alert("Failed to process image. Please try again.");
-      return;
-    }
+    // if (!result.success || !result.imageUrl) {
+    //   setIsProcessing(false);
+    //   alert("Failed to process image. Please try again.");
+    //   return;
+    // }
 
     const { FabricImage } = await import("fabric");
     const imgElement = new Image();
     imgElement.crossOrigin = "anonymous";
-    imgElement.src = result.imageUrl;
+    // imgElement.src = result.imageUrl;
+    imgElement.src =
+      "https://ik.imagekit.io/r8pra5q2fr/anime-generated/Generated%20Image%20March%2010,%202026%20-%208_50PM.png";
 
     imgElement.onload = async () => {
       const img = new FabricImage(imgElement);
@@ -317,55 +338,54 @@ export default function PosterEditor() {
     if (!fabricRef.current || !hasPhoto) return;
 
     setIsDownloading(true);
+    const toastId = toast.loading("Preparing your high-res poster...");
 
     try {
       const canvas = fabricRef.current;
 
-      // Step 1: Deselect everything
+      // 1. Prepare Canvas (Hide UI elements)
       canvas.discardActiveObject();
-      canvas.requestRenderAll();
-
-      // Step 2: Hide watermarks before export
       const objects = canvas.getObjects();
       const watermarks = objects.filter((o: any) => o.name === "watermark");
       watermarks.forEach((w: any) => w.set("visible", false));
       canvas.requestRenderAll();
 
-      // Step 3: Export clean canvas at 1.5x resolution
+      // 2. Export Image
       const base64 = canvas.toDataURL({
         format: "png",
         multiplier: 1.5,
         quality: 1,
       });
 
-      // Step 4: Restore watermarks immediately
+      // 3. Restore UI
       watermarks.forEach((w: any) => w.set("visible", true));
       canvas.requestRenderAll();
 
-      // Step 5: Get poster name
+      // 4. Extract Name
       const nameTextObj = objects.find((o: any) => o.name === "poster_name");
       const posterName = nameTextObj?.text?.trim() || "WANTED";
 
-      // Step 6: Strip the data:image/png;base64, prefix before sending
-      const base64Data = base64.replace(/^data:image\/png;base64,/, "");
-
-      // Step 7: Send to backend — backend saves to DB, creates Stripe session
-      const sessionRes = await fetch(`${API_URL}/api/v1/poster/save-session`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ posterBase64: base64Data, posterName }),
+      // 5. Call the Server Action
+      // No need for manual fetch or base64 stripping if your action handles it
+      const result = await saveSession({
+        posterBase64: base64, // Sending the full string is usually fine for Server Actions
+        posterName,
       });
 
-      if (!sessionRes.ok) throw new Error("Failed to save session");
-
-      const sessionData = await sessionRes.json();
-      if (!sessionData.checkoutUrl) throw new Error("No checkout URL returned");
-
-      // Step 8: Redirect to Stripe Checkout
-      window.location.href = sessionData.checkoutUrl;
-    } catch (err) {
-      console.error(err);
-      alert("Something went wrong. Please try again.");
+      if (result.success && result.checkoutUrl) {
+        toast.success("Redirecting to secure checkout...", { id: toastId });
+        // Small delay so they can see the success message
+        setTimeout(() => {
+          window.location.href = result.checkoutUrl;
+        }, 800);
+      } else {
+        throw new Error(result.error || "Failed to create checkout session");
+      }
+    } catch (err: any) {
+      console.error("Download Error:", err);
+      toast.error(err.message || "Something went wrong. Please try again.", {
+        id: toastId,
+      });
       setIsDownloading(false);
     }
   };
@@ -398,7 +418,9 @@ export default function PosterEditor() {
           {isLoading && (
             <div className="absolute inset-0 z-20 bg-gray-50 flex flex-col items-center justify-center gap-3">
               <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
-              <p className="text-gray-500 font-medium text-xs">Loading Editor...</p>
+              <p className="text-gray-500 font-medium text-xs">
+                Loading Editor...
+              </p>
             </div>
           )}
 
@@ -408,8 +430,12 @@ export default function PosterEditor() {
               <div className="relative z-10 flex flex-col items-center gap-4 text-black p-6">
                 <Loader2 className="w-12 h-12 animate-spin text-black/90" />
                 <div className="text-center">
-                  <p className="text-lg font-bold tracking-wide">Generating Anime Art</p>
-                  <p className="text-sm text-black/70">Applying wanted poster filters...</p>
+                  <p className="text-lg font-bold tracking-wide">
+                    Generating Anime Art
+                  </p>
+                  <p className="text-sm text-black/70">
+                    Applying wanted poster filters...
+                  </p>
                 </div>
               </div>
             </div>
@@ -421,8 +447,12 @@ export default function PosterEditor() {
               <div className="relative z-10 flex flex-col items-center gap-4 text-black p-6">
                 <Loader2 className="w-12 h-12 animate-spin text-black/90" />
                 <div className="text-center">
-                  <p className="text-lg font-bold tracking-wide">Preparing your poster...</p>
-                  <p className="text-sm text-black/70">Redirecting to checkout</p>
+                  <p className="text-lg font-bold tracking-wide">
+                    Preparing your poster...
+                  </p>
+                  <p className="text-sm text-black/70">
+                    Redirecting to checkout
+                  </p>
                 </div>
               </div>
             </div>
@@ -432,26 +462,31 @@ export default function PosterEditor() {
             <canvas ref={canvasEl} className="block" />
           </div>
 
-          {hasPhoto && !isLoading && !isEditingText && !isProcessing && !isDownloading && (
-            <button
-              onClick={triggerUpload}
-              disabled={cooldown > 0}
-              className={`absolute z-30 top-[58%] right-[12%] p-2.5 rounded-full shadow-md border border-gray-200 transition-all
-                ${cooldown > 0
-                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                  : "bg-white text-gray-700 hover:bg-gray-50 active:scale-95"
+          {hasPhoto &&
+            !isLoading &&
+            !isEditingText &&
+            !isProcessing &&
+            !isDownloading && (
+              <button
+                onClick={triggerUpload}
+                disabled={cooldown > 0}
+                className={`absolute z-30 top-[58%] right-[12%] p-2.5 rounded-full shadow-md border border-gray-200 transition-all
+                ${
+                  cooldown > 0
+                    ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                    : "bg-white text-gray-700 hover:bg-gray-50 active:scale-95"
                 }`}
-              title={cooldown > 0 ? `Wait ${cooldown}s` : "Replace Photo"}
-            >
-              {cooldown > 0 ? (
-                <span className="font-bold text-xs w-5 h-5 flex items-center justify-center">
-                  {cooldown}
-                </span>
-              ) : (
-                <Pencil className="w-5 h-5" />
-              )}
-            </button>
-          )}
+                title={cooldown > 0 ? `Wait ${cooldown}s` : "Replace Photo"}
+              >
+                {cooldown > 0 ? (
+                  <span className="font-bold text-xs w-5 h-5 flex items-center justify-center">
+                    {cooldown}
+                  </span>
+                ) : (
+                  <Pencil className="w-5 h-5" />
+                )}
+              </button>
+            )}
         </div>
 
         {!isEditingText && (
@@ -470,14 +505,25 @@ export default function PosterEditor() {
                 onClick={triggerUpload}
                 disabled={cooldown > 0 || isButtonDisabled}
                 className={`flex-1 border py-3 px-4 rounded-lg font-semibold shadow-sm text-sm transition-all flex items-center justify-center gap-2
-                  ${cooldown > 0
-                    ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
-                    : "bg-white hover:bg-gray-50 text-gray-700 border-gray-300"
+                  ${
+                    cooldown > 0
+                      ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                      : "bg-white hover:bg-gray-50 text-gray-700 border-gray-300"
                   }`}
               >
-                {cooldown > 0 ? <Lock className="w-4 h-4" /> : <ImagePlus className="w-4 h-4" />}
+                {cooldown > 0 ? (
+                  <Lock className="w-4 h-4" />
+                ) : (
+                  <ImagePlus className="w-4 h-4" />
+                )}
                 <span>
-                  {isProcessing ? "Processing..." : hasPhoto ? cooldown > 0 ? `Wait ${cooldown}s` : "Replace" : "Upload"}
+                  {isProcessing
+                    ? "Processing..."
+                    : hasPhoto
+                      ? cooldown > 0
+                        ? `Wait ${cooldown}s`
+                        : "Replace"
+                      : "Upload"}
                 </span>
               </button>
 
@@ -502,9 +548,3 @@ export default function PosterEditor() {
     </div>
   );
 }
-
-
-/*
-Sessio create o
-
-*/

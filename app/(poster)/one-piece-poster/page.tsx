@@ -1,4 +1,5 @@
 import FAQ from "@/components/poster/Faq";
+import Hero from "@/components/poster/Hero";
 import Navbar from "@/components/poster/Navbar";
 import { Upload, Wand2, Download, Zap, Shield, Type } from "lucide-react";
 import { Noto_Sans } from "next/font/google";
@@ -42,33 +43,7 @@ const faq = [
   },
 ];
 
-const Hero = () => (
-  <section className="flex flex-col items-center mx-auto lg:pt-4 pt-4 pb-16 lg:pb-24 px-4 lg:px-6 lg:gap-24 gap-12 w-full min-h-screen lg:h-screen">
-    <Navbar />
-    <div className="flex flex-col lg:flex-row items-center w-full justify-between px-2 sm:px-8 lg:px-32 gap-12 lg:gap-0 mt-8 lg:mt-0">
-      <header className="flex flex-col justify-center gap-6 text-center lg:text-left">
-        <h1
-          className={`text-black text-4xl sm:text-4xl lg:text-8xl font-black m-0 leading-[1.1] ${noto_sans.className}`}
-        >
-          Create Your Own
-          <br className="block" />
-          <span className="max-lg:text-4xl text-red-600">Wanted Poster</span>
-        </h1>
-        <h2 className="text-lg lg:text-xl font-medium text-gray-800 max-w-2xl">
-          Upload your selfie and let our AI instantly animefy it into a
-          high-definition pirate wanted poster. Customize your name and
-          bounty with no design skills required.
-        </h2>
-        <div className="flex justify-center lg:justify-start">
-          <button className="rounded-full px-8 py-4 text-lg bg-white border-black border-2 w-fit font-bold hover:bg-gray-100 transition-colors cursor-pointer">
-            Create Poster
-          </button>
-        </div>
-      </header>
-      <figure className="w-full max-w-[320px] sm:max-w-[400px] aspect-[2/3] rounded-md bg-red-600 border-4 border-black shadow-lg"></figure>
-    </div>
-  </section>
-);
+
 
 const HowItWorks = () => (
   <section className="flex flex-col items-center w-full justify-center px-4 sm:px-8 lg:px-32 bg-white border-y-8 border-black h-full py-20 lg:py-32">
