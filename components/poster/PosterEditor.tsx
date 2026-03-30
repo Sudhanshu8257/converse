@@ -12,6 +12,7 @@ import {
   Type,
   Move,
   CreditCard,
+  Sparkles,
 } from "lucide-react";
 import { saveSession, uploadToAnimeApi } from "@/actions/posterAction";
 import { toast } from "sonner";
@@ -32,26 +33,31 @@ type GeneratedImage = {
 const HOW_IT_WORKS = [
   {
     icon: <ImagePlus className="w-4 h-4" />,
+    step: "01",
     title: "Upload your photo",
-    desc: "Pick any clear face photo. The AI works best with good lighting.",
+    desc: "Pick any clear face photo. The AI works best with front-facing shots and good lighting.",
   },
   {
     icon: <Zap className="w-4 h-4" />,
+    step: "02",
     title: "AI animefies it",
     desc: "Gemini transforms your photo into One Piece anime art. You get 3 tries per day.",
   },
   {
     icon: <Type className="w-4 h-4" />,
+    step: "03",
     title: "Edit your name",
-    desc: "Double-tap the name on the poster to edit it. Drag to reposition.",
+    desc: "Double-tap the name on the poster to edit it. Drag to reposition anywhere.",
   },
   {
     icon: <Move className="w-4 h-4" />,
+    step: "04",
     title: "Adjust the image",
     desc: "Drag and resize your anime portrait to fit perfectly on the poster.",
   },
   {
     icon: <CreditCard className="w-4 h-4" />,
+    step: "05",
     title: "Pay & download",
     desc: "Happy with the result? Pay $1.99 and get the full-res poster sent to your email.",
   },
@@ -80,7 +86,6 @@ export default function PosterEditor({
   const [resetInMs, setResetInMs] = useState<number>(
     sessionData?.resetInMs ?? 0,
   );
-
   const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>(
     sessionData?.generatedImages || [],
   );
@@ -107,20 +112,20 @@ export default function PosterEditor({
     return () => clearInterval(interval);
   }, [showLimitModal, resetInMs]);
 
-  // Prevent scroll & right click`
+  // Prevent scroll & right click
   useEffect(() => {
-    document.body.style.overflow = "hidden";
-    document.body.style.position = "fixed";
-    document.body.style.width = "100%";
-    document.body.style.height = "100%";
+    // document.body.style.overflow = "hidden";
+    // document.body.style.position = "fixed";
+    // document.body.style.width = "100%";
+    // document.body.style.height = "100%";
     const handleContextMenu = (e: MouseEvent) => e.preventDefault();
     document.addEventListener("contextmenu", handleContextMenu);
     return () => {
       document.removeEventListener("contextmenu", handleContextMenu);
-      document.body.style.overflow = "";
-      document.body.style.position = "";
-      document.body.style.width = "";
-      document.body.style.height = "";
+      // document.body.style.overflow = "";
+      // document.body.style.position = "";
+      // document.body.style.width = "";
+      // document.body.style.height = "";
     };
   }, []);
 
@@ -371,32 +376,37 @@ export default function PosterEditor({
     formData.append("image", file);
     formData.append("sessionId", sessionId);
 
-    const result = await uploadToAnimeApi(formData);
+    // const result = await uploadToAnimeApi(formData);
 
-    if (!result.success || !result.imageUrl) {
-      // If limit hit server-side, show modal
-      if (result.resetInMs) {
-        setResetInMs(result.resetInMs);
-        setAttemptsLeft(0);
-        setShowLimitModal(true);
-      } else {
-        toast.error("Failed to process image. Please try again.");
-      }
-      setIsProcessing(false);
-      return;
-    }
+    // if (!result.success || !result.imageUrl) {
+    //   if (result.resetInMs) {
+    //     setResetInMs(result.resetInMs);
+    //     setAttemptsLeft(0);
+    //     setShowLimitModal(true);
+    //   } else {
+    //     toast.error("Failed to process image. Please try again.");
+    //   }
+    //   setIsProcessing(false);
+    //   return;
+    // }
 
-    // --- COMMENTED: hardcoded test image ---
-    // const result = { success: true, imageUrl: "https://ik.imagekit.io/...", fileId: "112" };
+    // const newImage: GeneratedImage = {
+    //   url: result.imageUrl,
+    //   fileId: result.fileId,
+    //   createdAt: new Date().toISOString(),
+    // };
 
     const newImage: GeneratedImage = {
-      url: result.imageUrl,
-      fileId: result.fileId,
+      url: "https://ik.imagekit.io/r8pra5q2fr/anime-generated/anime_1774537787766_qpgUj8iHi.png?updatedAt=1774537790020",
+      fileId: "111111",
       createdAt: new Date().toISOString(),
     };
     setGeneratedImages((prev) => [...prev, newImage]);
     setAttemptsLeft((prev) => Math.max(0, prev - 1));
-    await swapCanvasImage(result.imageUrl);
+    await swapCanvasImage(
+      "https://ik.imagekit.io/r8pra5q2fr/anime-generated/anime_1774537787766_qpgUj8iHi.png?updatedAt=1774537790020",
+    );
+    // await swapCanvasImage(result.imageUrl);
     setCooldown(COOLDOWN_TIME);
     setIsProcessing(false);
   };
@@ -456,7 +466,6 @@ export default function PosterEditor({
     generatedImages.length + (generatedImages.length < 3 ? 1 : 0),
   );
 
-  // Format ms to h:mm:ss
   const formatReset = (ms: number) => {
     const totalSec = Math.floor(ms / 1000);
     const h = Math.floor(totalSec / 3600);
@@ -470,20 +479,20 @@ export default function PosterEditor({
       {/* ─── GUIDE SIDEBAR ─────────────────────────────── */}
       {showGuide && (
         <div className="fixed inset-0 z-50 flex">
-          {/* Backdrop */}
           <div
-            className="flex-1 bg-black/40 backdrop-blur-sm"
+            className="flex-1 bg-black/50 backdrop-blur-sm"
             onClick={() => setShowGuide(false)}
           />
           {/* Panel */}
-          <div className="w-[280px] bg-[#1a1209] text-[#f5e6c8] flex flex-col h-full shadow-2xl animate-in slide-in-from-right duration-300">
-            <div className="flex items-center justify-between p-5 border-b border-[#f5e6c8]/10">
+          <div className="w-[300px] bg-[#0f0a04] text-[#f0e6d3] flex flex-col h-full shadow-2xl">
+            {/* Panel header */}
+            <div className="flex items-center justify-between px-6 py-5 border-b border-white/8">
               <div>
-                <p className="text-[10px] tracking-[0.2em] text-[#f5e6c8]/50 uppercase mb-0.5">
-                  One Piece
+                <p className="text-[9px] tracking-[0.25em] text-[#c9a96e]/60 uppercase mb-1">
+                  One Piece · Wanted Poster
                 </p>
                 <h2
-                  className="text-lg font-bold"
+                  className="text-base font-bold tracking-tight"
                   style={{ fontFamily: "Georgia, serif" }}
                 >
                   How It Works
@@ -491,37 +500,53 @@ export default function PosterEditor({
               </div>
               <button
                 onClick={() => setShowGuide(false)}
-                className="p-1.5 rounded-full hover:bg-white/10 transition-colors"
+                className="w-8 h-8 rounded-full bg-white/6 hover:bg-white/12 transition-colors flex items-center justify-center"
               >
-                <X className="w-4 h-4" />
+                <X className="w-3.5 h-3.5" />
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-5 space-y-5">
-              {HOW_IT_WORKS.map((step, i) => (
-                <div key={i} className="flex gap-3">
-                  <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[#e63946]/20 border border-[#e63946]/30 flex items-center justify-center text-[#e63946]">
-                    {step.icon}
+            {/* Steps */}
+            <div className="flex-1 overflow-y-auto px-6 py-6">
+              <div className="space-y-0">
+                {HOW_IT_WORKS.map((step, i) => (
+                  <div key={i} className="relative flex gap-4">
+                    {/* Vertical connector */}
+                    {i < HOW_IT_WORKS.length - 1 && (
+                      <div className="absolute left-[19px] top-10 bottom-0 w-px bg-gradient-to-b from-[#c9a96e]/30 to-transparent" />
+                    )}
+                    {/* Step number bubble */}
+                    <div className="flex-shrink-0 flex flex-col items-center">
+                      <div className="w-10 h-10 rounded-full bg-[#c9a96e]/10 border border-[#c9a96e]/25 flex items-center justify-center mb-1">
+                        <span className="text-[#c9a96e] text-xs font-bold">
+                          {step.step}
+                        </span>
+                      </div>
+                    </div>
+                    {/* Content */}
+                    <div className="pb-7 pt-1.5">
+                      <p className="text-sm font-semibold text-[#f0e6d3] mb-1 leading-tight">
+                        {step.title}
+                      </p>
+                      <p className="text-xs text-[#f0e6d3]/45 leading-relaxed">
+                        {step.desc}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-semibold text-[#f5e6c8] mb-0.5">
-                      {step.title}
-                    </p>
-                    <p className="text-xs text-[#f5e6c8]/50 leading-relaxed">
-                      {step.desc}
-                    </p>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
 
-            <div className="p-5 border-t border-[#f5e6c8]/10">
-              <div className="bg-[#e63946]/10 border border-[#e63946]/20 rounded-xl p-3">
-                <p className="text-xs text-[#f5e6c8]/70 leading-relaxed">
-                  <span className="text-[#e63946] font-semibold">Tip:</span>{" "}
-                  Swap between your generated images using the slots below the
-                  poster. Pick the best one before downloading.
-                </p>
+            {/* Tip footer */}
+            <div className="px-6 pb-6">
+              <div className="rounded-xl bg-[#c9a96e]/8 border border-[#c9a96e]/15 p-4">
+                <div className="flex gap-2.5 items-start">
+                  <Sparkles className="w-3.5 h-3.5 text-[#c9a96e] mt-0.5 flex-shrink-0" />
+                  <p className="text-xs text-[#f0e6d3]/60 leading-relaxed">
+                    Swap between generated images using the slots below the
+                    poster. Pick the best one before downloading.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -532,35 +557,35 @@ export default function PosterEditor({
       {showLimitModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/65 backdrop-blur-sm"
             onClick={() => setShowLimitModal(false)}
           />
-          <div className="relative bg-[#1a1209] border border-[#f5e6c8]/10 rounded-2xl p-6 max-w-[300px] w-full shadow-2xl text-[#f5e6c8]">
-            <div className="w-12 h-12 rounded-full bg-[#e63946]/10 border border-[#e63946]/20 flex items-center justify-center mx-auto mb-4">
+          <div className="relative bg-[#0f0a04] border border-white/8 rounded-2xl p-7 max-w-[320px] w-full shadow-2xl text-[#f0e6d3]">
+            <div className="w-14 h-14 rounded-full bg-[#e63946]/10 border border-[#e63946]/20 flex items-center justify-center mx-auto mb-5">
               <Clock className="w-6 h-6 text-[#e63946]" />
             </div>
             <h3
-              className="text-center font-bold text-lg mb-1"
+              className="text-center font-bold text-lg mb-2"
               style={{ fontFamily: "Georgia, serif" }}
             >
               Daily Limit Reached
             </h3>
-            <p className="text-center text-[#f5e6c8]/50 text-sm mb-4">
+            <p className="text-center text-[#f0e6d3]/45 text-sm mb-5 leading-relaxed">
               You've used all 3 generations for today. Come back in:
             </p>
-            <div className="bg-black/30 rounded-xl py-3 px-4 text-center mb-4">
-              <span className="text-2xl font-bold tabular-nums text-[#e63946]">
+            <div className="bg-white/4 border border-white/8 rounded-xl py-4 px-4 text-center mb-5">
+              <span className="text-3xl font-bold tabular-nums text-[#e63946]">
                 {resetInMs > 0 ? formatReset(resetInMs) : "soon"}
               </span>
             </div>
-            <p className="text-center text-[#f5e6c8]/40 text-xs mb-5">
+            <p className="text-center text-[#f0e6d3]/35 text-xs mb-6 leading-relaxed">
               Already happy with one of your images? You can still download your
-              poster now.
+              poster.
             </p>
-            <div className="flex gap-2">
+            <div className="flex gap-2.5">
               <button
                 onClick={() => setShowLimitModal(false)}
-                className="flex-1 py-2.5 rounded-xl border border-[#f5e6c8]/10 text-sm text-[#f5e6c8]/60 hover:bg-white/5 transition-colors"
+                className="flex-1 py-3 rounded-xl border border-white/10 text-sm text-[#f0e6d3]/50 hover:bg-white/5 transition-colors"
               >
                 Close
               </button>
@@ -570,7 +595,7 @@ export default function PosterEditor({
                     setShowLimitModal(false);
                     download();
                   }}
-                  className="flex-1 py-2.5 rounded-xl bg-[#e63946] text-white text-sm font-semibold hover:bg-[#c1121f] transition-colors"
+                  className="flex-1 py-3 rounded-xl bg-[#e63946] text-white text-sm font-semibold hover:bg-[#c1121f] transition-colors"
                 >
                   Download $1.99
                 </button>
@@ -581,172 +606,243 @@ export default function PosterEditor({
       )}
 
       {/* ─── MAIN LAYOUT ───────────────────────────────── */}
+      {/* Background */}
       <div
-        className="fixed inset-0 w-full h-full font-sans overflow-hidden"
-        style={{ background: "#E0CFBA" }}
+        className=" w-full overflow-y-auto min-h-screen h-full flex items-center justify-center font-sans"
+        style={{
+          background:
+            "linear-gradient(135deg, #d4c4a8 0%, #c9b896 50%, #bfac87 100%)",
+        }}
       >
+        {/* Subtle noise texture overlay */}
         <div
-          className={`w-full h-full overflow-y-auto flex flex-col items-center p-4 transition-all duration-300 ${isEditingText ? "justify-start pt-4" : "justify-center"}`}
+          className="absolute inset-0 opacity-30 pointer-events-none"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E")`,
+          }}
+        />
+
+        <div
+          className={`relative w-full min-h-full overflow-y-auto flex flex-col items-center transition-all duration-300
+            ${isEditingText ? "justify-start pt-4 px-4" : "justify-center px-4 py-6"}`}
         >
-       
-          <div className="flex max-lg:flex-col items-center justify-center">
-            {/* Canvas */}
-            <div
-              ref={containerRef}
-              className="relative w-full max-w-[340px] bg-white shadow-2xl rounded-sm border border-gray-200 shrink-0 overflow-hidden"
-              style={{ height: "500px" }}
-            >
-              {isLoading && (
-                <div className="absolute inset-0 z-20 bg-gray-50 flex flex-col items-center justify-center gap-3">
-                  <Loader2 className="w-8 h-8 text-[#e63946] animate-spin" />
-                  <p className="text-gray-400 text-xs">Loading Editor...</p>
-                </div>
-              )}
-
-              {isProcessing && (
-                <div className="absolute inset-0 z-50 flex flex-col items-center justify-center animate-in fade-in duration-300">
-                  <div className="absolute inset-0 bg-[#1a1209]/70 backdrop-blur-md" />
-                  <div className="relative z-10 flex flex-col items-center gap-3 text-[#f5e6c8] p-6">
-                    <Loader2 className="w-10 h-10 animate-spin text-[#e63946]" />
-                    <div className="text-center">
-                      <p
-                        className="text-base font-bold"
-                        style={{ fontFamily: "Georgia, serif" }}
-                      >
-                        Animefying...
-                      </p>
-                      <p className="text-xs text-[#f5e6c8]/60 mt-1">
-                        This takes about 15 seconds
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {isDownloading && (
-                <div className="absolute inset-0 z-50 flex flex-col items-center justify-center animate-in fade-in duration-300">
-                  <div className="absolute inset-0 bg-[#1a1209]/70 backdrop-blur-md" />
-                  <div className="relative z-10 flex flex-col items-center gap-3 text-[#f5e6c8] p-6">
-                    <Loader2 className="w-10 h-10 animate-spin text-[#e63946]" />
-                    <div className="text-center">
-                      <p
-                        className="text-base font-bold"
-                        style={{ fontFamily: "Georgia, serif" }}
-                      >
-                        Preparing poster...
-                      </p>
-                      <p className="text-xs text-[#f5e6c8]/60 mt-1">
-                        Redirecting to checkout
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <div className="w-full h-full overflow-hidden">
-                <canvas ref={canvasEl} className="block" />
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center justify-center p-4 h-full bg-white gap-4 rounded-r-xl ">
-                {/* Header */}
-          {!isEditingText && (
-            <div className="flex items-center justify-between w-full max-w-[340px] mb-5 ">
-              <div className="flex flex-col gap-1">
-                <p className="text-[10px] text-gray-500 leading-[0]">
-                  One Piece
-                </p>
-                <h1
-                  className="text-2xl leading-[0] font-bold text-gray-800"
-                >
-                  Wanted Maker
-                </h1>
-              </div>
-              <button
-                onClick={() => setShowGuide(true)}
-                className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 border border-gray-300 bg-white/70 rounded-full px-3 py-1.5 hover:bg-white transition-colors"
+          {/* ── DESKTOP: side-by-side layout ── */}
+          {/* ── MOBILE: stacked layout ── */}
+          <div className="flex flex-col lg:flex-row bg-white/90 items-center lg:items-stretch justify-center w-fit rounded-xl max-w-5xl">
+            {/* ─── CANVAS PANEL ─── */}
+            <div className="flex-shrink-0 flex flex-col">
+              {/* Canvas wrapper */}
+              <div
+                ref={containerRef}
+                className="relative bg-white shadow-2xl rounded-lg border border-black/10 overflow-hidden"
+                style={{
+                  width: "min(420px, calc(100vw - 2rem))",
+                  /* height is set dynamically by fitToScreen */
+                }}
               >
-                How it works <ChevronRight className="w-3 h-3" />
-              </button>
-            </div>
-          )}
-              {/* Image slots */}
-              {!isEditingText && (
-                <div className="mt-3 w-full max-w-[340px] shrink-0">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-[10px] tracking-[0.15em] uppercase text-gray-500 font-semibold">
-                      Your Generations
-                    </p>
-                    <p
-                      className={`text-[10px] font-semibold ${attemptsLeft > 0 ? "text-gray-500" : "text-[#e63946]"}`}
-                    >
-                      {attemptsLeft > 0
-                        ? `${attemptsLeft} left today`
-                        : "Limit reached · resets in " +
-                          (resetInMs > 0 ? formatReset(resetInMs) : "24h")}
+                {isLoading && (
+                  <div className="absolute inset-0 z-20 bg-[#faf8f5] flex flex-col items-center justify-center gap-3">
+                    <Loader2 className="w-8 h-8 text-[#e63946] animate-spin" />
+                    <p className="text-[#9a8a7a] text-xs tracking-wide">
+                      Loading editor…
                     </p>
                   </div>
+                )}
 
-                  <div className="flex gap-2">
-                    {Array.from({ length: totalSlots }).map((_, i) => {
-                      const img = generatedImages[i];
-                      const isActive = img?.url === activeImageUrl;
-                      return (
-                        <button
-                          key={i}
-                          onClick={() =>
-                            img ? swapCanvasImage(img.url) : triggerUpload()
-                          }
-                          disabled={isButtonDisabled}
-                          className={`relative flex-1 rounded-xl overflow-hidden border-2 transition-all active:scale-95
-                        ${
-                          isActive
-                            ? "border-[#e63946] shadow-lg shadow-[#e63946]/20"
-                            : img
-                              ? "border-gray-300 hover:border-gray-400"
-                              : "border-dashed border-gray-300 bg-white/50 hover:border-gray-400"
-                        }`}
-                          style={{ aspectRatio: "1" }}
-                          title={img ? "Use this image" : "Generate image"}
+                {isProcessing && (
+                  <div className="absolute inset-0 z-50 flex flex-col items-center justify-center animate-in fade-in duration-300">
+                    <div className="absolute inset-0 bg-[#0f0a04]/75 backdrop-blur-md" />
+                    <div className="relative z-10 flex flex-col items-center gap-4 text-[#f0e6d3] p-6 text-center">
+                      <div className="w-14 h-14 rounded-full border-2 border-[#e63946]/30 border-t-[#e63946] animate-spin" />
+                      <div>
+                        <p
+                          className="text-base font-bold"
+                          style={{ fontFamily: "Georgia, serif" }}
                         >
-                          {img ? (
-                            <>
-                              <img
-                                src={img.url}
-                                alt={`Gen ${i + 1}`}
-                                className="w-full h-full object-cover"
-                              />
-                              {isActive && (
-                                <div className="absolute bottom-1 right-1 w-2.5 h-2.5 rounded-full bg-[#e63946] shadow-sm border border-white" />
-                              )}
-                              {/* Slot number */}
-                              <div className="absolute top-1 left-1 w-4 h-4 rounded-full bg-black/40 flex items-center justify-center">
-                                <span className="text-[8px] text-white font-bold">
-                                  {i + 1}
-                                </span>
-                              </div>
-                            </>
-                          ) : (
-                            <div className="w-full h-full flex flex-col items-center justify-center gap-1 py-3">
-                              <ImagePlus className="w-4 h-4 text-gray-400" />
-                              <span className="text-[9px] text-gray-400 font-medium">
-                                {attemptsLeft > 0
-                                  ? "Generate"
-                                  : "No tries left"}
-                              </span>
-                            </div>
-                          )}
-                        </button>
-                      );
-                    })}
+                          Animefying…
+                        </p>
+                        <p className="text-xs text-[#f0e6d3]/55 mt-1">
+                          This takes about 15 seconds
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {/* Actions */}
+                {isDownloading && (
+                  <div className="absolute inset-0 z-50 flex flex-col items-center justify-center animate-in fade-in duration-300">
+                    <div className="absolute inset-0 bg-[#0f0a04]/75 backdrop-blur-md" />
+                    <div className="relative z-10 flex flex-col items-center gap-4 text-[#f0e6d3] p-6 text-center">
+                      <div className="w-14 h-14 rounded-full border-2 border-[#e63946]/30 border-t-[#e63946] animate-spin" />
+                      <div>
+                        <p
+                          className="text-base font-bold"
+                          style={{ fontFamily: "Georgia, serif" }}
+                        >
+                          Preparing poster…
+                        </p>
+                        <p className="text-xs text-[#f0e6d3]/55 mt-1">
+                          Redirecting to checkout
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="w-full h-full overflow-hidden">
+                  <canvas ref={canvasEl} className="block" />
+                </div>
+              </div>
+            </div>
+
+            {/* ─── CONTROLS PANEL ─── */}
+            <div
+              className="flex flex-col bg-white/90 w-full backdrop-blur-sm rounded-b-xl lg:rounded-r-xl border border-black/8 shadow-xl overflow-hidden"
+             
+            >
               {!isEditingText && (
                 <>
-                  <div className="flex gap-2.5 mt-3 w-full max-w-[340px] justify-center shrink-0">
+                  {/* Header */}
+                  <div className="px-5 max-lg:hidden pt-5 pb-4 border-b border-black/6">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-[9px] tracking-[0.2em] uppercase text-[#9a8a6a] font-semibold mb-0.5">
+                          One Piece
+                        </p>
+                        <h1
+                          className="text-2xl font-bold text-[#1a1209] leading-tight"
+                          style={{ fontFamily: "Georgia, serif" }}
+                        >
+                          Wanted Maker
+                        </h1>
+                        <p className="text-xs text-[#8a7a6a] mt-1">
+                          Turn your face into anime art
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => setShowGuide(true)}
+                        className="flex-shrink-0 flex items-center gap-1.5 text-[11px] font-semibold text-[#5a4a3a] bg-[#f0e8d8] hover:bg-[#e8dcc8] border border-[#d4c4a4] rounded-full px-3 py-1.5 transition-colors"
+                      >
+                        Guide <ChevronRight className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Generations */}
+                  <div className="px-5 py-4 border-b border-black/6">
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="text-[10px] tracking-[0.15em] uppercase text-[#8a7a6a] font-bold">
+                        Your Generations
+                      </p>
+                      <span
+                        className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                          attemptsLeft > 0
+                            ? "text-[#5a7a4a] bg-[#e8f2e0]"
+                            : "text-[#e63946] bg-[#fde8e8]"
+                        }`}
+                      >
+                        {attemptsLeft > 0
+                          ? `${attemptsLeft} left today`
+                          : "Limit reached"}
+                      </span>
+                    </div>
+
+                    <div className="flex gap-2.5">
+                      {Array.from({ length: totalSlots }).map((_, i) => {
+                        const img = generatedImages[i];
+                        const isActive = img?.url === activeImageUrl;
+                        return (
+                          <button
+                            key={i}
+                            onClick={() =>
+                              img ? swapCanvasImage(img.url) : triggerUpload()
+                            }
+                            disabled={isButtonDisabled}
+                            className={`relative flex-1 rounded-xl overflow-hidden transition-all active:scale-95
+                              ${
+                                isActive
+                                  ? "ring-2 ring-[#e63946] ring-offset-1 shadow-lg shadow-[#e63946]/15"
+                                  : img
+                                    ? "border-2 border-[#d4c4a4] hover:border-[#b4a484]"
+                                    : "border-2 border-dashed border-[#c4b494] bg-[#faf6ef] hover:border-[#a49474] hover:bg-[#f5f0e4]"
+                              }`}
+                            style={{ aspectRatio: "1" }}
+                            title={img ? "Use this image" : "Generate image"}
+                          >
+                            {img ? (
+                              <>
+                                <img
+                                  src={img.url}
+                                  alt={`Gen ${i + 1}`}
+                                  className="w-full h-full object-cover"
+                                />
+                                {isActive && (
+                                  <div className="absolute bottom-1.5 right-1.5 w-3 h-3 rounded-full bg-[#e63946] border-2 border-white shadow" />
+                                )}
+                                <div className="absolute top-1.5 left-1.5 w-5 h-5 rounded-full bg-black/35 backdrop-blur-sm flex items-center justify-center">
+                                  <span className="text-[9px] text-white font-bold">
+                                    {i + 1}
+                                  </span>
+                                </div>
+                              </>
+                            ) : (
+                              <div className="w-full h-full flex flex-col items-center justify-center gap-1.5 py-4">
+                                <div className="w-7 h-7 rounded-full bg-[#e8d8b8] flex items-center justify-center">
+                                  <ImagePlus className="w-3.5 h-3.5 text-[#9a8a6a]" />
+                                </div>
+                                <span className="text-[9px] text-[#9a8a6a] font-medium">
+                                  {attemptsLeft > 0
+                                    ? "Generate"
+                                    : "No tries left"}
+                                </span>
+                              </div>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {attemptsLeft <= 0 && resetInMs > 0 && (
+                      <p className="text-[10px] text-[#9a7a6a] mt-2 text-center">
+                        Resets in {formatReset(resetInMs)}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Instructions */}
+                  {/* <div className="px-5 py-4 border-b border-black/6 flex-1">
+                    <p className="text-[10px] tracking-[0.15em] uppercase text-[#8a7a6a] font-bold mb-3">
+                      Quick Tips
+                    </p>
+                    <div className="space-y-2.5">
+                      {[
+                        {
+                          icon: "✦",
+                          text: "Tap a slot above to switch between your generations",
+                        },
+                        {
+                          icon: "✦",
+                          text: "Double-tap the name text on the poster to edit it",
+                        },
+                        {
+                          icon: "✦",
+                          text: "Drag the portrait to reposition it on the poster",
+                        },
+                      ].map((tip, i) => (
+                        <div key={i} className="flex gap-2 items-start">
+                          <span className="text-[#c9a96e] text-[10px] mt-0.5 flex-shrink-0">
+                            {tip.icon}
+                          </span>
+                          <p className="text-xs text-[#6a5a4a] leading-relaxed">
+                            {tip.text}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div> */}
+
+                  {/* Download CTA */}
+                  <div className="px-5 py-4">
                     <input
                       ref={fileInputRef}
                       type="file"
@@ -757,49 +853,72 @@ export default function PosterEditor({
                     />
 
                     <button
-                      onClick={triggerUpload}
-                      disabled={isButtonDisabled && attemptsLeft > 0}
-                      className={`flex-1 border py-3 px-4 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2
-                    ${
-                      attemptsLeft <= 0
-                        ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
-                        : cooldown > 0
-                          ? "bg-white/60 text-gray-400 border-gray-200 cursor-not-allowed"
-                          : "bg-white hover:bg-gray-50 text-gray-700 border-gray-300 shadow-sm"
-                    }`}
-                    >
-                      <ImagePlus className="w-4 h-4" />
-                      <span>
-                        {isProcessing
-                          ? "Generating..."
-                          : cooldown > 0
-                            ? `Wait ${cooldown}s`
-                            : attemptsLeft <= 0
-                              ? "Limit Reached"
-                              : hasPhoto
-                                ? "Regenerate"
-                                : "Upload & Generate"}
-                      </span>
-                    </button>
-
-                    <button
                       onClick={download}
                       disabled={isButtonDisabled || !hasPhoto}
-                      className="flex-1 bg-[#e63946] hover:bg-[#c1121f] text-white py-3 px-4 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2 disabled:opacity-40 shadow-md shadow-[#e63946]/20"
+                      className="w-full bg-[#1a1209] hover:bg-[#2d2010] disabled:opacity-35 disabled:cursor-not-allowed text-[#f0e6d3] py-3.5 px-5 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2.5 shadow-lg"
                     >
                       <Download className="w-4 h-4" />
                       <span>
-                        {isDownloading ? "Preparing..." : "Download $1.99"}
+                        {isDownloading
+                          ? "Preparing…"
+                          : "Download Poster — $1.99"}
                       </span>
                     </button>
-                  </div>
 
-                  <p className="mt-3 text-gray-400 text-[10px] text-center max-w-[300px] shrink-0 pb-8">
-                    {!hasPhoto
-                      ? "Upload a photo to get started • 3 AI generations per day"
-                      : "Tap a slot to switch • Double-tap text to edit • Drag to reposition"}
-                  </p>
+                    {/* Upload trigger — shown subtly below when no photo */}
+                    {!hasPhoto && (
+                      <button
+                        onClick={triggerUpload}
+                        disabled={isButtonDisabled}
+                        className="w-full mt-2.5 border border-dashed border-[#c4b494] hover:border-[#a49474] bg-[#faf6ef] hover:bg-[#f5f0e4] text-[#7a6a5a] py-3 px-5 rounded-xl text-sm transition-all flex items-center justify-center gap-2 disabled:opacity-40"
+                      >
+                        <ImagePlus className="w-4 h-4" />
+                        <span>
+                          {isProcessing
+                            ? "Generating…"
+                            : cooldown > 0
+                              ? `Wait ${cooldown}s`
+                              : "Upload & Generate"}
+                        </span>
+                      </button>
+                    )}
+
+                    {hasPhoto && cooldown === 0 && attemptsLeft > 0 && (
+                      <button
+                        onClick={triggerUpload}
+                        disabled={isButtonDisabled}
+                        className="w-full mt-2.5 border border-[#d4c4a4] hover:border-[#b4a484] bg-transparent text-[#7a6a5a] py-2.5 px-5 rounded-xl text-xs transition-all flex items-center justify-center gap-2 disabled:opacity-40"
+                      >
+                        <ImagePlus className="w-3.5 h-3.5" />
+                        <span>
+                          {isProcessing
+                            ? "Generating…"
+                            : `Regenerate (${attemptsLeft} left)`}
+                        </span>
+                      </button>
+                    )}
+
+                    <p className="mt-3 text-[#9a8a74] text-[10px] text-center leading-relaxed">
+                      {!hasPhoto
+                        ? "Upload a photo to get started · 3 AI generations per day"
+                        : "Full-res poster delivered after secure checkout"}
+                    </p>
+                  </div>
                 </>
+              )}
+
+              {isEditingText && (
+                <div className="flex-1 flex flex-col items-center justify-center gap-2 p-8 text-center">
+                  <div className="w-10 h-10 rounded-full bg-[#e8d8b8] flex items-center justify-center mb-2">
+                    <Type className="w-4 h-4 text-[#9a8a6a]" />
+                  </div>
+                  <p className="text-sm font-semibold text-[#1a1209]">
+                    Editing name…
+                  </p>
+                  <p className="text-xs text-[#8a7a6a] leading-relaxed">
+                    Click anywhere outside the text to finish editing
+                  </p>
+                </div>
               )}
             </div>
           </div>
