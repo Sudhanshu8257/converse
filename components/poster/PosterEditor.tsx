@@ -628,13 +628,13 @@ export default function PosterEditor({
         >
           {/* ── DESKTOP: side-by-side layout ── */}
           {/* ── MOBILE: stacked layout ── */}
-          <div className="flex flex-col lg:flex-row bg-white/90 items-center lg:items-stretch justify-center w-fit rounded-xl max-w-5xl">
+          <div className="flex flex-col lg:flex-row lg:bg-white/90 items-center lg:items-stretch justify-center w-fit rounded-xl max-w-5xl">
             {/* ─── CANVAS PANEL ─── */}
             <div className="flex-shrink-0 flex flex-col">
               {/* Canvas wrapper */}
               <div
                 ref={containerRef}
-                className="relative bg-white shadow-2xl rounded-lg border border-black/10 overflow-hidden"
+                className="relative bg-white rounded-lg border border-black/10 overflow-hidden"
                 style={{
                   width: "min(420px, calc(100vw - 2rem))",
                   /* height is set dynamically by fitToScreen */
@@ -697,7 +697,7 @@ export default function PosterEditor({
 
             {/* ─── CONTROLS PANEL ─── */}
             <div
-              className="flex flex-col bg-white/90 w-full backdrop-blur-sm rounded-b-xl lg:rounded-r-xl border border-black/8 shadow-xl overflow-hidden"
+              className="flex flex-col lg:bg-white/90 w-full backdrop-blur-sm rounded-b-xl lg:rounded-r-xl  overflow-hidden"
              
             >
               {!isEditingText && (
@@ -729,7 +729,7 @@ export default function PosterEditor({
                   </div>
 
                   {/* Generations */}
-                  <div className="px-5 py-4 border-b border-black/6">
+                  <div className="px-5 py-4 lg:mt-auto border-b border-black/6">
                     <div className="flex items-center justify-between mb-3">
                       <p className="text-[10px] tracking-[0.15em] uppercase text-[#8a7a6a] font-bold">
                         Your Generations
@@ -927,3 +927,13 @@ export default function PosterEditor({
     </>
   );
 }
+
+/*
+1. Improve ui Font color and sizing (current layout looks good)
+2. Show all the user generated images give option to user to view all with the today 3 images highlighted based on the generations attempts
+3. Improve the guide section ui currently does not look good at all (seperate component cotrolled by props)
+4. use shadcn ui components
+5. decrease canvas size in mobile by 10%
+6. pinch for sizing the image in mobile 
+7. mobile ui 
+*/
