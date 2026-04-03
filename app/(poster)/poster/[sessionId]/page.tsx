@@ -8,10 +8,12 @@ const page = async ({ params }: { params: { sessionId: string } }) => {
   if (!sessionId) redirect("/one-piece-poster");
 
   const sessionData: any = await getSessionState(sessionId);
-  console.log(sessionData);
-  if (!sessionData || sessionData.data.status !== "active")
+  if (sessionData && sessionData.data.status === "paid") {
+    redirect(`/poster/success/${sessionId}`);
+  }
+  if (!sessionData || sessionData.data.status !== "active") {
     redirect("/one-piece-poster");
-
+  }
   return (
     <div>
       <PosterEditor sessionId={sessionId} sessionData={sessionData.data} />
