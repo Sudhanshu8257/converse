@@ -1,18 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState, ChangeEvent } from "react";
-import {
-  Download,
-  Loader2,
-  ImagePlus,
-  Type,
-} from "lucide-react";
+import { Download, Loader2, ImagePlus, Type } from "lucide-react";
 import { saveSession, uploadToAnimeApi } from "@/actions/posterAction";
 import { toast } from "sonner";
 
 import { GuideButton, HowItWorksSheet } from "./HowItWorksSheet";
 import { LimitModal } from "./LimitModal";
 import { GenerationsGrid } from "./GenerationsGrid";
+import { trackEvent } from "@/lib/analytics";
 
 // --- CONSTANTS ---
 const POSTER_WIDTH = 724;
@@ -126,8 +122,12 @@ export default function PosterEditor({
       }
     };
 
-    container.addEventListener("touchstart", handleTouchStart, { passive: false });
-    container.addEventListener("touchmove", handleTouchMove, { passive: false });
+    container.addEventListener("touchstart", handleTouchStart, {
+      passive: false,
+    });
+    container.addEventListener("touchmove", handleTouchMove, {
+      passive: false,
+    });
     return () => {
       container.removeEventListener("touchstart", handleTouchStart);
       container.removeEventListener("touchmove", handleTouchMove);
@@ -140,8 +140,14 @@ export default function PosterEditor({
     const init = async () => {
       if (!canvasEl.current) return;
       try {
-        const { Canvas, FabricImage, IText, Rect, Group, Object: FabricObject } =
-          await import("fabric");
+        const {
+          Canvas,
+          FabricImage,
+          IText,
+          Rect,
+          Group,
+          Object: FabricObject,
+        } = await import("fabric");
         if (!isMounted) return;
 
         FabricObject.prototype.transparentCorners = false;
@@ -172,10 +178,12 @@ export default function PosterEditor({
         canvas.on("text:editing:entered", () => {
           setIsEditingText(true);
           window.scrollTo(0, 0);
+          trackEvent("poster_name_edit_started");
         });
         canvas.on("text:editing:exited", () => {
           setIsEditingText(false);
           window.scrollTo(0, 0);
+          trackEvent("poster_name_edit_finished");
         });
 
         const btnRect = new Rect({
@@ -205,7 +213,10 @@ export default function PosterEditor({
           hoverCursor: "pointer",
           name: "upload_trigger",
         } as any);
-        uploadGroup.on("mousedown", () => fileInputRef.current?.click());
+        uploadGroup.on("mousedown", () => {
+          trackEvent("canvas_upload_trigger_clicked");
+          fileInputRef.current?.click();
+        });
         canvas.add(uploadGroup);
 
         const template = await FabricImage.fromURL("/assets/placeholder2.png");
@@ -278,16 +289,29 @@ export default function PosterEditor({
         };
 
         canvas.add(createCornerLabel("CONVERSE", -45, offset, offset));
-        canvas.add(createCornerLabel("CONVERSE", 45, POSTER_WIDTH - offset, offset));
-        canvas.add(createCornerLabel("CONVERSE", 45, offset, POSTER_HEIGHT - offset));
-        canvas.add(createCornerLabel("CONVERSE", -45, POSTER_WIDTH - offset, POSTER_HEIGHT - offset));
+        canvas.add(
+          createCornerLabel("CONVERSE", 45, POSTER_WIDTH - offset, offset),
+        );
+        canvas.add(
+          createCornerLabel("CONVERSE", 45, offset, POSTER_HEIGHT - offset),
+        );
+        canvas.add(
+          createCornerLabel(
+            "CONVERSE",
+            -45,
+            POSTER_WIDTH - offset,
+            POSTER_HEIGHT - offset,
+          ),
+        );
 
         canvas.renderAll();
         setIsLoading(false);
+        trackEvent("poster_editor_loaded", { session_id: sessionId });
         setTimeout(fitToScreen, 100);
       } catch (err) {
         console.error(err);
         setIsLoading(false);
+        trackEvent("poster_editor_load_error");
       }
     };
 
@@ -342,6 +366,7 @@ export default function PosterEditor({
       fabricRef.current.requestRenderAll();
       setActiveImageUrl(imageUrl);
       setHasPhoto(true);
+      trackEvent("canvas_image_swapped", { image_url: imageUrl });
     };
   };
 
@@ -349,16 +374,22 @@ export default function PosterEditor({
     if (!fabricRef.current || !e.target.files?.[0]) return;
     if (cooldown > 0) {
       toast.error(`Wait ${cooldown}s before replacing.`);
+      trackEvent("upload_blocked_cooldown", { cooldown_remaining: cooldown });
       return;
     }
     if (attemptsLeft <= 0) {
       setShowLimitModal(true);
+      trackEvent("upload_blocked_limit_reached");
       return;
     }
 
     const file = e.target.files[0];
     e.target.value = "";
     setIsProcessing(true);
+    trackEvent("image_upload_started", {
+      file_size: file.size,
+      file_type: file.type,
+    });
 
     const formData = new FormData();
     formData.append("image", file);
@@ -371,8 +402,12 @@ export default function PosterEditor({
         setResetInMs(result.resetInMs);
         setAttemptsLeft(0);
         setShowLimitModal(true);
+        trackEvent("upload_failed_rate_limited", {
+          reset_in_ms: result.resetInMs,
+        });
       } else {
         toast.error("Failed to process image. Please try again.");
+        trackEvent("upload_failed_error");
       }
       setIsProcessing(false);
       return;
@@ -395,11 +430,16 @@ export default function PosterEditor({
     await swapCanvasImage(newImage.url);
     setCooldown(COOLDOWN_TIME);
     setIsProcessing(false);
+    trackEvent("image_generation_success", {
+      file_id: result.fileId,
+      attempts_left: Math.max(0, attemptsLeft - 1),
+    });
   };
 
   const download = async () => {
     if (!fabricRef.current || !hasPhoto) return;
     setIsDownloading(true);
+    trackEvent("download_initiated");
     const toastId = toast.loading("Preparing your high-res poster...");
     try {
       const canvas = fabricRef.current;
@@ -425,6 +465,7 @@ export default function PosterEditor({
 
       if (result.success && result.checkoutUrl) {
         toast.success("Redirecting to secure checkout...", { id: toastId });
+        trackEvent("checkout_redirect", { poster_name: posterName });
         setTimeout(() => {
           window.location.href = result.checkoutUrl;
         }, 800);
@@ -433,6 +474,7 @@ export default function PosterEditor({
       }
     } catch (err: any) {
       toast.error(err.message || "Something went wrong.", { id: toastId });
+      trackEvent("download_failed", { error: err.message });
       setIsDownloading(false);
     }
   };
@@ -440,9 +482,17 @@ export default function PosterEditor({
   const triggerUpload = () => {
     if (attemptsLeft <= 0) {
       setShowLimitModal(true);
+      trackEvent("upload_trigger_blocked_limit");
       return;
     }
-    if (cooldown > 0) return;
+    if (cooldown > 0) {
+      toast.info(`Regenerate in ${cooldown}s`);
+      trackEvent("upload_trigger_blocked_cooldown", {
+        cooldown_remaining: cooldown,
+      });
+      return;
+    }
+    trackEvent("upload_trigger_clicked", { has_photo: hasPhoto });
     fileInputRef.current?.click();
   };
 
@@ -451,12 +501,21 @@ export default function PosterEditor({
   return (
     <>
       {/* ─── GUIDE SHEET ─── */}
-      <HowItWorksSheet open={showGuide} onOpenChange={setShowGuide} />
+      <HowItWorksSheet
+        open={showGuide}
+        onOpenChange={(open) => {
+          setShowGuide(open);
+          if (open) trackEvent("guide_sheet_opened");
+        }}
+      />
 
       {/* ─── LIMIT MODAL ─── */}
       <LimitModal
         open={showLimitModal}
-        onClose={() => setShowLimitModal(false)}
+        onClose={() => {
+          setShowLimitModal(false);
+          trackEvent("limit_modal_closed");
+        }}
         resetInMs={resetInMs}
         hasPhoto={hasPhoto}
         onDownload={download}
@@ -555,7 +614,12 @@ export default function PosterEditor({
                         Turn your face into anime art
                       </p>
                     </div>
-                    <GuideButton onClick={() => setShowGuide(true)} />
+                    <GuideButton
+                      onClick={() => {
+                        setShowGuide(true);
+                        trackEvent("guide_button_clicked");
+                      }}
+                    />
                   </div>
 
                   {/* Generations Grid */}
@@ -565,7 +629,12 @@ export default function PosterEditor({
                     attemptsLeft={attemptsLeft}
                     resetInMs={resetInMs}
                     isButtonDisabled={isButtonDisabled}
-                    onSelectImage={swapCanvasImage}
+                    onSelectImage={(url) => {
+                      swapCanvasImage(url);
+                      trackEvent("generation_thumbnail_selected", {
+                        image_url: url,
+                      });
+                    }}
                     onTriggerUpload={triggerUpload}
                   />
 

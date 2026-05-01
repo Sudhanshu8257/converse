@@ -41,7 +41,10 @@ export const PosterNavLinks = [
     label: "Gallery",
     route: "#gallery",
   },
-  
+   {
+    label: "Faq",
+    route: "#faq",
+  },
 ];
 
 export const celebs = [

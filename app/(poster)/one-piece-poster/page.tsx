@@ -1,98 +1,118 @@
 import FAQ from "@/components/poster/Faq";
+import Gallery from "@/components/poster/Gallery";
 import Hero from "@/components/poster/Hero";
-import Navbar from "@/components/poster/Navbar";
-import { Upload, Wand2, Download, Zap, Shield, Type } from "lucide-react";
-import { Noto_Sans } from "next/font/google";
+import { PosterFaqs, PosterFaqSchema } from "@/lib/seo";
+import {
+  Upload,
+  Wand2,
+  Download,
+  Zap,
+  Shield,
+  Type,
+  ImagePlus,
+  Move,
+  CreditCard,
+} from "lucide-react";
+import { Metadata } from "next";
+import Link from "next/link";
+import Script from "next/script";
 import React from "react";
 
-const noto_sans = Noto_Sans({
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-  subsets: ["latin"],
-});
-
-const faq = [
-  {
-    question: "How realistic is the AI anime transformation?",
-    answer:
-      "Our AI is perfectly tuned to map your facial features and seamlessly blend them into an authentic, high-quality anime art style, creating a truly unique pirate wanted poster.",
-    _id: "68ef03c0c3c87d688084d4fc",
+export const metadata: Metadata = {
+  title: "One Piece Wanted Poster Generator | Bounty Maker - Converse",
+  description:
+    "Create your own custom One Piece bounty poster in seconds! Upload a photo, set your bounty, and download high-quality anime wanted posters. Try it now on Converse.",
+  keywords:
+    "One Piece bounty poster maker, One Piece wanted poster generator, Custom anime bounty maker, Luffy wanted poster creator, DIY One Piece poster, Anime poster editor, Make your own One Piece bounty poster online, One Piece wanted poster template with custom photo",
+  openGraph: {
+    title: "Make Your Own One Piece Wanted Poster | Converse",
+    description:
+      "Become a part of the Straw Hat crew! Generate a custom high-res bounty poster with your own photo and name.",
+    images: [
+      {
+        url: "https://ik.imagekit.io/r8pra5q2fr/posters/poster_446b3576-6540-430a-a5d2-2fac68d8f250_pNOBMMebQ.png",
+      },
+    ],
   },
-  {
-    question: "Can I customize the name on the bounty poster?",
-    answer:
-      "Yes! Once our AI animefies your selfie, you can easily edit the text to include your own custom pirate alias or real name before downloading.",
-    _id: "68ef03c0c3c87d688084d4fd",
-  },
-  {
-    question: "Are the generated posters good enough for printing?",
-    answer:
-      "Absolutely. We generate all wanted posters in high-definition (HD), ensuring they look crisp and professional whether you share them online or print them as wall art.",
-    _id: "68ef03c0c3c87d688084d4fe",
-  },
-  {
-    question: "How long does it take to create my poster?",
-    answer:
-      "It takes just seconds. Upload your image, let the AI process it almost instantly, type your custom name, and your poster is ready to download.",
-    _id: "68ef03c0c3c87d688084d4ff",
-  },
-  {
-    question: "Is my uploaded selfie kept private?",
-    answer:
-      "Your privacy is our priority. Your photos are securely processed to generate the artwork and are automatically deleted from our servers right after.",
-    _id: "68ef03c0c3c87d688084d500",
-  },
-];
-
-
+};
 
 const HowItWorks = () => (
-  <section className="flex flex-col items-center w-full justify-center px-4 sm:px-8 lg:px-32 bg-white border-y-8 border-black h-full py-20 lg:py-32">
+  <section
+    id="how-it-works"
+    className="flex flex-col items-center w-full justify-center px-4 sm:px-8 lg:px-32 bg-white border-y-8 border-black h-full py-20 lg:py-32"
+  >
     <header className="flex flex-col items-center justify-center gap-4 text-center">
       <span className="bg-gray-200 border-2 border-black rounded-full px-4 py-1.5 font-bold shadow-lg text-sm uppercase">
         How it Works
       </span>
       <h2 className="text-4xl lg:text-6xl font-bold m-0 text-balance">
-        Create Poster in 3 Easy Steps
+        Create Poster in 5 Easy Steps
       </h2>
       <p className="text-lg lg:text-xl font-medium text-gray-600 mt-4 lg:mt-6 px-4 lg:px-52 text-balance">
         Our AI-powered generator makes it incredibly simple to turn yourself
-        into a legendary anime character. Just follow these steps to claim
-        your bounty.
+        into a legendary anime character. Just follow these steps to claim your
+        bounty.
       </p>
     </header>
-    <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-16 mt-16 lg:mt-24 w-full">
-      <article className="rounded-lg border-2 border-black shadow-sm flex flex-col p-8 justify-center w-full lg:w-1/3 text-center lg:text-left bg-gray-50">
+
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16 lg:mt-24 w-full">
+      {/* Step 1 */}
+      <article className="rounded-lg border-2 border-black shadow-sm flex flex-col p-8 justify-center bg-gray-50">
         <div className="flex justify-center lg:justify-start">
-          <Upload size={56} strokeWidth={1.5} />
+          <ImagePlus size={56} strokeWidth={1.5} />
         </div>
-        <h3 className="text-2xl m-0 font-bold mt-8">1. Upload Selfie</h3>
+        <h3 className="text-2xl m-0 font-bold mt-8">01. Upload photo</h3>
         <p className="text-lg lg:text-xl mt-4 font-medium text-gray-800">
-          Upload a clear photo of yourself. Good lighting helps the AI
-          capture your best features.
+          Pick any clear face photo. The AI works best with front-facing shots
+          and good lighting.
         </p>
       </article>
 
-      <article className="rounded-lg border-2 border-black shadow-sm flex flex-col p-8 justify-center w-full lg:w-1/3 text-center lg:text-left bg-gray-50">
+      {/* Step 2 */}
+      <article className="rounded-lg border-2 border-black shadow-sm flex flex-col p-8 justify-center bg-gray-50">
         <div className="flex justify-center lg:justify-start">
-          <Wand2 size={56} strokeWidth={1.5} />
+          <Zap size={56} strokeWidth={1.5} />
         </div>
-        <h3 className="text-2xl m-0 font-bold mt-8">
-          2. AI Animefy & Edit
-        </h3>
+        <h3 className="text-2xl m-0 font-bold mt-8">02. AI animefies it</h3>
         <p className="text-lg lg:text-xl mt-4 font-medium text-gray-800">
-          Watch as our system transforms you into anime art. Customize the
-          text with your name.
+          Gemini transforms your photo into One Piece anime art. You get 3 tries
+          per day.
         </p>
       </article>
 
-      <article className="rounded-lg border-2 border-black shadow-sm flex flex-col p-8 justify-center w-full lg:w-1/3 text-center lg:text-left bg-gray-50">
+      {/* Step 3 */}
+      <article className="rounded-lg border-2 border-black shadow-sm flex flex-col p-8 justify-center bg-gray-50">
         <div className="flex justify-center lg:justify-start">
-          <Download size={56} strokeWidth={1.5} />
+          <Type size={56} strokeWidth={1.5} />
         </div>
-        <h3 className="text-2xl m-0 font-bold mt-8">3. Download Poster</h3>
+        <h3 className="text-2xl m-0 font-bold mt-8">03. Edit your name</h3>
         <p className="text-lg lg:text-xl mt-4 font-medium text-gray-800">
-          Instantly save your high-resolution pirate wanted poster to share
-          or print.
+          Double-tap the name on the poster to edit it. Drag to reposition
+          anywhere.
+        </p>
+      </article>
+
+      {/* Step 4 */}
+      <article className="rounded-lg border-2 border-black shadow-sm flex flex-col p-8 justify-center bg-gray-50">
+        <div className="flex justify-center lg:justify-start">
+          <Move size={56} strokeWidth={1.5} />
+        </div>
+        <h3 className="text-2xl m-0 font-bold mt-8">04. Adjust the image</h3>
+        <p className="text-lg lg:text-xl mt-4 font-medium text-gray-800">
+          Drag and resize your anime portrait to fit perfectly. Pinch to zoom on
+          mobile.
+        </p>
+      </article>
+
+      {/* Step 5 */}
+      <article className="rounded-lg border-2 border-black shadow-sm flex flex-col p-8 justify-center bg-gray-50">
+        <div className="flex justify-center lg:justify-start">
+          <CreditCard size={56} strokeWidth={1.5} />
+        </div>
+        <h3 className="text-2xl m-0 font-bold mt-8">05. Pay & download</h3>
+        <p className="text-lg lg:text-xl mt-4 font-medium text-gray-800">
+          Happy with the result? Pay $1.99 and get the full-res poster sent to
+          your email.
         </p>
       </article>
     </div>
@@ -100,7 +120,10 @@ const HowItWorks = () => (
 );
 
 const Features = () => (
-  <section className="flex flex-col items-center w-full justify-center shrink-0 px-4 sm:px-8 lg:px-32 border-black bg-[#E6E4D5] py-20 lg:py-32">
+  <section
+    id="features"
+    className="flex flex-col items-center w-full bg-white justify-center shrink-0 px-4 sm:px-8 lg:px-32 border-b-8 border-black  py-20 lg:py-32"
+  >
     <header className="flex flex-col items-center justify-center gap-4 text-center">
       <span className="bg-gray-200 border-2 border-black rounded-full px-4 py-1.5 font-bold shadow-lg text-sm uppercase">
         Key Features
@@ -134,8 +157,8 @@ const Features = () => (
         },
         {
           icon: Shield,
-          title: "100% Secure",
-          desc: "Photos are deleted immediately after your poster is created.",
+          title: "No Login Required",
+          desc: "No login is required! start creating your One Piece wanted poster immediately.",
         },
         {
           icon: Upload,
@@ -148,11 +171,7 @@ const Features = () => (
           className="rounded-lg border-2 border-black overflow-hidden shadow-sm flex flex-row lg:flex-col bg-white h-full"
         >
           <div className="w-24 lg:w-32 lg:h-32 lg:rounded-br-2xl lg:rounded-tr-none bg-black flex items-center justify-center shrink-0 self-stretch lg:self-auto">
-            <feature.icon
-              size={32}
-              color="white"
-              className="lg:w-12 lg:h-12"
-            />
+            <feature.icon size={32} color="white" className="lg:w-12 lg:h-12" />
           </div>
           <div className="flex justify-center gap-1 lg:gap-4 flex-col p-4 lg:p-8 grow text-left">
             <h3 className="text-lg lg:text-xl m-0 font-bold">
@@ -168,60 +187,8 @@ const Features = () => (
   </section>
 );
 
-const GalleryCard = () => {
-  return (
-    <figure className="w-60 h-72 lg:w-64 lg:h-80 mx-3 lg:mx-6 bg-red-300 relative rounded-md overflow-hidden border-2 border-black shrink-0 bg-[url('https://placehold.co/400x600/e2e8f0/1e293b?text=Output+Poster')] bg-cover bg-center">
-      <div className="w-28 h-36 lg:w-32 lg:h-40 bg-green-300 absolute rounded-tr-md bottom-0 left-0 border-t-2 border-r-2 border-black bg-[url('https://placehold.co/200x300/cbd5e1/475569?text=Selfie')] bg-cover bg-center"></div>
-    </figure>
-  );
-};
-
-const Gallery = () => (
-  <section className="flex flex-col items-center w-full justify-center bg-white border-y-8 border-black shrink-0 py-20 lg:py-32 overflow-hidden">
-    <header className="flex flex-col items-center justify-center gap-4 px-4 text-center">
-      <span className="bg-gray-200 border-2 border-black rounded-full px-4 py-1.5 font-bold shadow-lg text-sm uppercase">
-        Our Works
-      </span>
-      <h2 className="text-4xl lg:text-6xl font-bold m-0">Gallery</h2>
-      <p className="text-lg font-medium text-gray-600 mt-2 text-balance">
-        See how ordinary selfies transform into legendary bounties.
-      </p>
-    </header>
-
-    <div className="w-full h-fit overflow-hidden mt-16 lg:mt-24">
-      <div className="flex w-fit h-fit animate-marquee hover:[animation-play-state:paused]">
-        <div className="flex shrink-0">
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((_, i) => (
-            <GalleryCard key={`batch1-${i}`} />
-          ))}
-        </div>
-        <div className="flex shrink-0" aria-hidden="true">
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((_, i) => (
-            <GalleryCard key={`batch2-${i}`} />
-          ))}
-        </div>
-      </div>
-    </div>
-
-    <div className="w-full overflow-hidden mt-8 lg:mt-12">
-      <div className="flex w-fit animate-marquee_reverse hover:[animation-play-state:paused]">
-        <div className="flex shrink-0">
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((_, i) => (
-            <GalleryCard key={`batch3-${i}`} />
-          ))}
-        </div>
-        <div className="flex shrink-0" aria-hidden="true">
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((_, i) => (
-            <GalleryCard key={`batch4-${i}`} />
-          ))}
-        </div>
-      </div>
-    </div>
-  </section>
-);
-
 const FaqSection = () => (
-  <section className="flex flex-col items-center w-full justify-center shrink-0 px-4 sm:px-8 lg:px-32 border-black bg-[#E6E4D5] py-20 lg:py-32">
+  <section className="flex flex-col items-center w-full justify-center shrink-0 px-4 sm:px-8 lg:px-32 border-b-8 border-black bg-[#E6E4D5] py-20 lg:py-32">
     <header className="flex flex-col items-center justify-center gap-4 text-center mb-12 lg:mb-16">
       <span className="bg-gray-200 border-2 border-black rounded-full px-4 py-1.5 font-bold shadow-lg text-sm uppercase">
         Support
@@ -231,7 +198,7 @@ const FaqSection = () => (
       </h2>
     </header>
     <div className="w-full max-w-4xl">
-      <FAQ data={faq} />
+      <FAQ data={PosterFaqs} />
     </div>
   </section>
 );
@@ -241,9 +208,98 @@ const Page = () => {
     <main className="w-full flex flex-col items-center bg-[#E6E4D5] overflow-x-hidden">
       <Hero />
       <HowItWorks />
-      <Features />
       <Gallery />
+      <Features />
       <FaqSection />
+      <section className="flex flex-col items-center w-full bg-white justify-center shrink-0 px-4 sm:px-8 lg:px-32 border-b-8 border-black  py-20 lg:py-32">
+        <div className="max-w-4xl mx-auto">
+          {/* Primary SEO Content Block */}
+          <div className="prose prose-red max-w-none">
+            <h2 className="text-3xl lg:text-4xl font-black text-black mb-6 tracking-tight">
+              The Ultimate{" "}
+              <span className="text-red-600">One Piece Bounty Poster</span>{" "}
+              Generator
+            </h2>
+
+            <p className="text-lg leading-relaxed text-gray-700 mb-6">
+              Have you ever wondered what your <strong>pirate bounty</strong>{" "}
+              would be in the world of the Grand Line? At{" "}
+              <Link href={"/"}><strong>Converse</strong></Link>, we’ve built the most advanced{" "}
+              <strong>One Piece bounty poster maker</strong> that uses
+              professional-grade AI to turn your real-life photos into authentic
+              anime artwork. Whether you want to join the Straw Hat crew or
+              start your own pirate fleet, our generator creates high-definition
+              <strong> wanted posters</strong> that look like they were pulled
+              straight from the manga.
+            </p>
+
+            <h3 className="text-2xl font-bold text-black mt-10 mb-4">
+              Why Use the Converse Anime Poster Maker?
+            </h3>
+            <p className="text-gray-700 mb-6">
+              Unlike basic templates or generic photo filters,  Converse offers a
+              premium experience for true anime fans. We don&apos;t just slap a
+              filter on your photo; our AI regenerates your image from scratch
+              to match the specific line art, shading, and aesthetic of the
+              legendary pirate series.
+            </p>
+
+            <ul className="space-y-4 mb-8">
+              <li className="flex items-start">
+                <span className="text-red-600 mr-2">✓</span>
+                <span>
+                  <strong>No Login Required:</strong> Start creating
+                  immediately. We value your privacy—no accounts or tedious
+                  sign-ups.
+                </span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-red-600 mr-2">✓</span>
+                <span>
+                  <strong>3 Free Regenerations:</strong> Not happy with the
+                  first look? You can regenerate your anime photo up to 3 times
+                  every 24 hours.
+                </span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-red-600 mr-2">✓</span>
+                <span>
+                  <strong>Pay Only for Perfection:</strong> You can create,
+                  edit, and preview your poster for free. Only pay to download
+                  the high-resolution, watermark-free version.
+                </span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-red-600 mr-2">✓</span>
+                <span>
+                  <strong>HD Quality for Printing:</strong> Our posters are
+                  generated in high-definition, making them perfect for custom
+                  anime wall art or social media profiles.
+                </span>
+              </li>
+            </ul>
+
+            <h3 className="text-2xl font-bold text-black mt-10 mb-4">
+              How to Make Your Own One Piece Wanted Poster
+            </h3>
+            <p className="text-gray-700 leading-relaxed italic">
+              Simply upload a front-facing photo, wait a few seconds for the AI
+              to work its magic, and enter your custom name. Our system ensures
+              your name fits perfectly in the iconic typography of the
+              <strong> One Piece wanted poster template</strong>. Once finished,
+              you’ll have a professional pirate bounty ready for the world to
+              see.
+            </p>
+          </div>
+        </div>
+      </section>
+      <Script
+        id="FaqSchema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(PosterFaqSchema),
+        }}
+      />
     </main>
   );
 };

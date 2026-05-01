@@ -22,8 +22,7 @@ export async function uploadToAnimeApi(formData: FormData) {
 
     const data = await response.json();
     console.log(data);
-    // Assuming the API returns { imageUrl: "..." }
-    return { success: true, imageUrl: `${data.imageUrl}` };
+    return data;
   } catch (error) {
     console.error("API Error:", error);
     return { success: false, error: "Failed to process image" };
@@ -109,7 +108,6 @@ export const getDownloadSession = async (sessionId: string) => {
   try {
     const res = await fetch(`${API_URL}/api/v1/poster/download/${sessionId}`, {
       cache: "no-store",
-      next: { revalidate: 0 }
     });
 
     const data = await res.json();
@@ -123,6 +121,7 @@ export const getDownloadSession = async (sessionId: string) => {
       status: data.status,
       posterUrl: data.posterUrl,
       posterName: data.posterName,
+      lemonSqueezyId: data?.lemonSqueezyId
     };
   } catch (error) {
     console.error("getSession error:", error);
@@ -156,7 +155,6 @@ export const getSession = async (sessionId: string) => {
 export const getSessionState = async (sessionId: string) => {
   try {
     const res = await fetch(`${API_URL}/api/v1/poster/session/${sessionId}`, {
-      // No cache — always fetch fresh on each poll
       cache: "no-store",
     });
 

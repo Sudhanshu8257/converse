@@ -8,10 +8,11 @@ const page = async ({ params }: { params: { sessionId: string } }) => {
   if (!sessionId) redirect("/one-piece-poster");
 
   const sessionData: any = await getSessionState(sessionId);
+  console.log("sessionData",sessionData)
   if (sessionData && sessionData.data.status === "paid") {
-    redirect(`/poster/success/${sessionId}`);
+    redirect(`/poster/status/${sessionId}`);
   }
-  if (!sessionData || sessionData.data.status !== "active") {
+  if (!sessionData ) {
     redirect("/one-piece-poster");
   }
   return (

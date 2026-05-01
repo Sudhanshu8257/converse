@@ -19,6 +19,7 @@
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
     "fabric": "^7.1.0",
+    "firebase": "^12.12.1",
     "highlight.js": "^11.9.0",
     "lucide-react": "^0.379.0",
     "markdown-to-jsx": "^7.4.7",

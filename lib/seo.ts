@@ -212,3 +212,87 @@ export const getAboutPageSchema = () => {
     ]
   };
 };
+
+export const PosterFaqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How does the One Piece bounty poster generator work?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Our AI analyzes your selfie to map facial features and converts them into an authentic One Piece anime style. It then seamlessly integrates your anime-style portrait onto a high-quality bounty poster template."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I customize the name on my anime wanted poster?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! After the AI transforms your photo into a pirate portrait, you can easily edit the text to include your own custom name or pirate alias before downloading your final poster."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is the generated wanted poster high-definition (HD)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Absolutely. Converse generates posters in high-definition (HD) resolution, making them perfect for high-quality printing, custom anime wall art, or sharing on social media."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How long does it take to create a custom bounty poster?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The process is nearly instant. Simply upload your photo, let the AI generate your anime style, type in your custom name, and your One Piece style poster is ready for download in under 30 seconds."
+      }
+    }
+  ]
+}
+
+export const PosterFaqs = [
+  {
+    question: "How does the One Piece bounty poster generator work?",
+    answer:
+      "Our AI analyzes your selfie to map facial features and converts them into an authentic One Piece anime style. It then seamlessly integrates your anime-style portrait onto a high-quality bounty poster template.",
+    _id: "68ef03c0c3c87d688084d4fc",
+  },
+  {
+    question: "Can I customize the name on my anime wanted poster?",
+    answer:
+      "Yes! After the AI transforms your photo into a pirate portrait, you can easily edit the text to include your own custom name or pirate alias before downloading your final poster.",
+    _id: "68ef03c0c3c87d688084d4fd",
+  },
+  {
+    question: "Is the generated wanted poster high-definition (HD)?",
+    answer:
+      "Absolutely. Converse generates posters in high-definition (HD) resolution, making them perfect for high-quality printing, custom anime wall art, or sharing on social media.",
+    _id: "68ef03c0c3c87d688084d4fe",
+  },
+  {
+    question: "How long does it take to create a custom bounty poster?",
+    answer:
+      "The process is nearly instant. Simply upload your photo, let the AI generate your anime style, type in your custom name, and your One Piece style poster is ready for download in under 30 seconds.",
+    _id: "68ef03c0c3c87d688084d4ff",
+  },
+  {
+    question: "Do I need to create an account to use the bounty maker?",
+    answer:
+      "No login is required! You can start creating your One Piece wanted poster immediately without sharing any personal information or creating an account on Converse.",
+    _id: "68ef03c0c3c87d688084d500",
+  },
+  {
+    question: "What if I don't like the first AI anime transformation?",
+    answer:
+      "No problem! You can regenerate your anime photo up to 3 times every 24 hours for free. We want to ensure you are 100% happy with your pirate look before you decide to download.",
+    _id: "68ef03c0c3c87d688084d501",
+  },
+  {
+    question: "How does the 'Pay After Satisfied' model work?",
+    answer:
+      "You only pay for the final high-definition poster once you are satisfied with the AI generation and your custom name. Create, edit, and preview your poster for free—only pay to remove the watermark and download the HD version.",
+    _id: "68ef03c0c3c87d688084d502",
+  },
+];
