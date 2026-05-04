@@ -4,12 +4,12 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-const API_URL = "http://localhost:4000";
+const API_URL = process.env.BACKEND_URL
 const SESSION_COOKIE = "poster_session_id";
 
 export async function uploadToAnimeApi(formData: FormData) {
   try {
-    const response = await fetch(API_URL + "/api/v1/poster/generate-anime", {
+    const response = await fetch(API_URL + "poster/generate-anime", {
       method: "POST",
       body: formData,
       // Note: Do not set Content-Type header manually when using FormData;
@@ -37,17 +37,18 @@ export const startPosterSession = async () => {
   const existingSessionId = cookieStore.get(SESSION_COOKIE)?.value ?? null;
 
   // Call backend — passes existing sessionId or null
-  const res = await fetch(`${API_URL}/api/v1/poster/new`, {
+  console.log(`${API_URL}api/v1/poster/new`)
+  const res = await fetch(`${API_URL}poster/new`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ sessionId: existingSessionId }),
   });
-
+    const data = await res.json();
+console.log(data)
   if (!res.ok) {
     throw new Error("Failed to start session");
   }
 
-  const data = await res.json();
   const sessionId = data.sessionId;
 
   // Store/update sessionId in cookie (7 days)
@@ -78,7 +79,7 @@ export const saveSession = async ({
   }
 
   try {
-    const res = await fetch(`${API_URL}/api/v1/poster/save`, {
+    const res = await fetch(`${API_URL}poster/save`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ sessionId, posterBase64, posterName }),
@@ -119,7 +120,7 @@ export const saveSessionFree = async ({
   }
 
   try {
-    const res = await fetch(`${API_URL}/api/v1/poster/free-download`, {
+    const res = await fetch(`${API_URL}poster/free-download`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ sessionId, posterBase64, posterName }),
@@ -147,7 +148,7 @@ export const saveSessionFree = async ({
 
 export const getDownloadSession = async (sessionId: string) => {
   try {
-    const res = await fetch(`${API_URL}/api/v1/poster/download/${sessionId}`, {
+    const res = await fetch(`${API_URL}poster/download/${sessionId}`, {
       cache: "no-store",
     });
 
@@ -172,7 +173,7 @@ export const getDownloadSession = async (sessionId: string) => {
 
 export const getSession = async (sessionId: string) => {
   try {
-    const res = await fetch(`${API_URL}/api/v1/poster/download/${sessionId}`, {
+    const res = await fetch(`${API_URL}poster/download/${sessionId}`, {
       // No cache — always fetch fresh on each poll
       cache: "no-store",
     });
@@ -195,7 +196,7 @@ export const getSession = async (sessionId: string) => {
 
 export const getSessionState = async (sessionId: string) => {
   try {
-    const res = await fetch(`${API_URL}/api/v1/poster/session/${sessionId}`, {
+    const res = await fetch(`${API_URL}poster/session/${sessionId}`, {
       cache: "no-store",
     });
 
