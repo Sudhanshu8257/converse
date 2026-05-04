@@ -25,6 +25,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${process.env.BASE_URL}register` },
     { url: `${process.env.BASE_URL}about` },
     { url: `${process.env.BASE_URL}my-projects` },
+     { url: `${process.env.BASE_URL}one-piece-poster` },
     ...celebEntries
   ];
 }
