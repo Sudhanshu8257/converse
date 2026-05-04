@@ -2,13 +2,18 @@
 
 import { useEffect, useRef, useState, ChangeEvent } from "react";
 import { Download, Loader2, ImagePlus, Type } from "lucide-react";
-import { saveSession, uploadToAnimeApi } from "@/actions/posterAction";
+import {
+  saveSession,
+  saveSessionFree,
+  uploadToAnimeApi,
+} from "@/actions/posterAction";
 import { toast } from "sonner";
 
 import { GuideButton, HowItWorksSheet } from "./HowItWorksSheet";
 import { LimitModal } from "./LimitModal";
 import { GenerationsGrid } from "./GenerationsGrid";
 import { trackEvent } from "@/lib/analytics";
+import { useRouter } from "next/navigation";
 
 // --- CONSTANTS ---
 const POSTER_WIDTH = 724;
@@ -34,6 +39,7 @@ export default function PosterEditor({
   const containerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const fabricRef = useRef<any>(null);
+  const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -436,6 +442,49 @@ export default function PosterEditor({
     });
   };
 
+  // const download = async () => {
+  //   if (!fabricRef.current || !hasPhoto) return;
+  //   setIsDownloading(true);
+  //   trackEvent("download_initiated");
+  //   const toastId = toast.loading("Preparing your high-res poster...");
+  //   try {
+  //     const canvas = fabricRef.current;
+  //     canvas.discardActiveObject();
+  //     const objects = canvas.getObjects();
+  //     const watermarks = objects.filter((o: any) => o.name === "watermark");
+  //     watermarks.forEach((w: any) => w.set("visible", false));
+  //     canvas.requestRenderAll();
+
+  //     const base64 = canvas.toDataURL({
+  //       format: "png",
+  //       multiplier: 1.5,
+  //       quality: 1,
+  //     });
+
+  //     watermarks.forEach((w: any) => w.set("visible", true));
+  //     canvas.requestRenderAll();
+
+  //     const nameTextObj = objects.find((o: any) => o.name === "poster_name");
+  //     const posterName = nameTextObj?.text?.trim() || "WANTED";
+
+  //     const result = await saveSession({ posterBase64: base64, posterName });
+
+  //     if (result.success && result.checkoutUrl) {
+  //       toast.success("Redirecting to secure checkout...", { id: toastId });
+  //       trackEvent("checkout_redirect", { poster_name: posterName });
+  //       setTimeout(() => {
+  //         window.location.href = result.checkoutUrl;
+  //       }, 800);
+  //     } else {
+  //       throw new Error(result.error || "Failed to create checkout session");
+  //     }
+  //   } catch (err: any) {
+  //     toast.error(err.message || "Something went wrong.", { id: toastId });
+  //     trackEvent("download_failed", { error: err.message });
+  //     setIsDownloading(false);
+  //   }
+  // };
+
   const download = async () => {
     if (!fabricRef.current || !hasPhoto) return;
     setIsDownloading(true);
@@ -461,14 +510,15 @@ export default function PosterEditor({
       const nameTextObj = objects.find((o: any) => o.name === "poster_name");
       const posterName = nameTextObj?.text?.trim() || "WANTED";
 
-      const result = await saveSession({ posterBase64: base64, posterName });
+      const result = await saveSessionFree({
+        posterBase64: base64,
+        posterName,
+      });
 
-      if (result.success && result.checkoutUrl) {
-        toast.success("Redirecting to secure checkout...", { id: toastId });
-        trackEvent("checkout_redirect", { poster_name: posterName });
-        setTimeout(() => {
-          window.location.href = result.checkoutUrl;
-        }, 800);
+      if (result.success && result.posterUrl) {
+        toast.success("Redirecting to success...", { id: toastId });
+        trackEvent("checkout_success", { poster_name: posterName });
+        router.push(`/poster/status/${sessionId}`);
       } else {
         throw new Error(result.error || "Failed to create checkout session");
       }
@@ -656,9 +706,21 @@ export default function PosterEditor({
                     >
                       <Download className="w-4 h-4" />
                       <span>
-                        {isDownloading
-                          ? "Preparing…"
-                          : "Download Poster — $1.99"}
+                        {isDownloading ? (
+                          "Preparing…"
+                        ) : (
+                          <span className="flex items-center gap-2">
+                            Download Poster —
+                            <div className="flex flex-col items-center justify-center gap-0">
+                              <span className="text-[#ffd700] text-base font-black drop-shadow-sm">
+                                FREE
+                              </span>
+                              <span className="line-through opacity-50 text-xs decoration-red-500">
+                                $1.99
+                              </span>
+                            </div>
+                          </span>
+                        )}
                       </span>
                     </button>
 
@@ -699,7 +761,7 @@ export default function PosterEditor({
                     <p className="mt-4 font-semibold text-[#9a8a74] text-[11px] text-center leading-relaxed">
                       {!hasPhoto
                         ? "Upload a photo to get started · 3 AI generations per day"
-                        : "Full-res poster delivered after secure checkout"}
+                        : "High-resolution poster · 100% Free"}
                     </p>
                   </div>
                 </>

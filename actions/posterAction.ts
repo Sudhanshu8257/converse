@@ -104,6 +104,47 @@ export const saveSession = async ({
   }
 };
 
+export const saveSessionFree = async ({
+  posterBase64,
+  posterName,
+}: {
+  posterBase64: string;
+  posterName: string;
+}) => {
+  const cookieStore = await cookies();
+  const sessionId = cookieStore.get(SESSION_COOKIE)?.value;
+
+  if (!sessionId) {
+    return { success: false, error: "No active session. Please start over." };
+  }
+
+  try {
+    const res = await fetch(`${API_URL}/api/v1/poster/free-download`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId, posterBase64, posterName }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      return {
+        success: false,
+        error: data.message || "Failed to save session",
+      };
+    }
+
+    if (!data.posterUrl) {
+      return { success: false, error: "Something Went Wrong. Please try again." };
+    }
+
+    return { success: true, posterUrl: data.posterUrl };
+  } catch (error) {
+    console.error("saveSession error:", error);
+    return { success: false, error: "Something went wrong. Please try again." };
+  }
+};
+
 export const getDownloadSession = async (sessionId: string) => {
   try {
     const res = await fetch(`${API_URL}/api/v1/poster/download/${sessionId}`, {

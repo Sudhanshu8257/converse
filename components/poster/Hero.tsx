@@ -6,6 +6,7 @@ import { Noto_Sans } from "next/font/google";
 import { toast } from "sonner";
 import Image from "next/image";
 import { trackEvent } from "@/lib/analytics";
+import FreeOfferPopup from "./FreeOfferPopup";
 
 const noto_sans = Noto_Sans({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -38,6 +39,7 @@ const Hero = () => {
   return (
     <section className="flex flex-col items-center mx-auto lg:pt-4 pt-4 pb-16 lg:pb-24 px-4 lg:px-6 lg:gap-24 gap-12 w-full min-h-screen lg:h-screen">
       <Navbar />
+      <FreeOfferPopup onStart={handleStartSession} isLoading={isLoading} />
       <div className="flex flex-col lg:flex-row items-center w-full justify-between px-2 sm:px-8 lg:px-32 gap-12 lg:gap-0 mt-8 lg:mt-0">
         <header className="flex flex-col justify-center gap-6 text-center lg:text-left">
           <h1
